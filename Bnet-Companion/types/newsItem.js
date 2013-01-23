@@ -93,6 +93,8 @@
 		
 		var dateB = b.replace(/^[bty]-/,'');
 		dateB = new Date(dateB);
+		
+		return dateB - dateA;
 	};
 	
 })();

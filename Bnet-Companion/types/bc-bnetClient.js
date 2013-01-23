@@ -1,6 +1,6 @@
 (function() {
 	var $j = jQuery.noConflict();
-	var devMode = true;
+	var devMode = false;
 	var _newsFeed = null;	
 	var _bungieRssUrl = 'http://www.bungie.net/en-us/Rss/News';
 	
