@@ -1,27 +1,22 @@
 (function() {
 	var $j = jQuery.noConflict();
-	var devMode = false;
+	var devMode = true;
 	var _newsFeed = null;	
-	var _testFeed = null;
 	var _bungieRssUrl = 'http://www.bungie.net/en-us/Rss/News';
 	
 	BcBnetClient = function() {
-		//if ( localStorage.newsFeed ) {
-		//	_testFeed = new BCNewsList(JSON.parse(localStorage.newsFeed));
-		//	console.log(_testFeed);
-		//} else {
-			_testFeed = new BCNewsList();
-		//}
+		if ( localStorage.newsFeed ) {
+			_newsFeed = new BCNewsList(JSON.parse(localStorage.newsFeed));
+		} else {
+			_newsFeed = new BCNewsList();
+		}
 		
 		updateNews();
 	};
 	
 	BcBnetClient.prototype.getNews = function() {
-		if ( devMode ) {
-			return getNewsFeedMock();
-		} else {
-			return _testFeed;
-		}
+	
+			return _newsFeed;
 		
 	};
 	
@@ -30,10 +25,21 @@
 	};
 	
 	var updateNews = function() {
-		getTwitterFeed();
-		getBungieBlog();
+	
+		if ( devMode ) {
+			_newsFeed = getNewsFeedMock();
+		} else {
+			try {
+				getTwitterFeed();
+				getBungieBlog();
+			} catch ( e ) {
+				console.log('An exception occurred when attempting to fetch the news feed:');
+				console.log(e);
+			}
+			
+		}
 				
-		localStorage.newsFeed = JSON.stringify(_testFeed);
+		localStorage.newsFeed = JSON.stringify(_newsFeed);
 		
 		// detect and store latest news item
 		/*if ( localStorage.latestPubDate && _newsFeed[0] ) {
@@ -72,9 +78,9 @@
 					
 					createdAt = $j(this).find('pubDate').text().replace("+0000", "GMT");
 					
-					item = new BCNewsItem(title, link, createdAt, 'bnet');
+					item = new BCNewsItem({title:title, url:link, pubDate:createdAt, source:'bnet'});
 					
-					_testFeed.add(item);
+					_newsFeed.add(item);
 				});
 			}
 		});
@@ -82,7 +88,6 @@
 		return bungieBlog;
 	};
 	
-
 	var getTwitterFeed = function() {
 		var feedData = new Array();
 		
@@ -100,23 +105,22 @@
 				//title, url, pubDate, source, itemId
 					link = "http://twitter.com/bungie/statuses/" + data[i].id_str;
 					
-					item = new BCNewsItem(data[i].text, link, data[i].created_at, 'twitter', data[i].id_str);
-					_testFeed.add(item);
+					item = new BCNewsItem({title:data[i].text, url:link, pubDate:data[i].created_at, source:'twitter', itemId:data[i].id_str});
+					_newsFeed.add(item);
 				}
 			}
 		
 		});
 	}
 	
-	var sortFeed = function(feed) {
-		return feed.sort(function(a,b) {
-			return (new Date(b._pubDate) - new Date(a._pubDate));
-		});
-	}
-	
+	var getYoutubeFeed = function() {};
 	
 	var getNewsFeedMock = function() { 
-		return [new BCNewsItem('Bungie has released Bungie.next to beta!', 'http://www.bungie.net', 'Wed Jan 16 00:42:25 +0000 2013', 'twitter', 'g7g7g7'), new BCNewsItem('Bungie has released Bungie.next to beta!', 'http://www.bungie.net', 'Wed Jan 16 00:42:25 +0000 2013', 'twitter', 'g7g7g7')];
+		var mockList = new BCNewsList();
+		mockList.add(new BCNewsItem({title:'Bungie has released Bungie.next to beta!', url:'http://www.bungie.net', pubDate:'Wed Jan 16 00:42:25 +0000 2013', source:'twitter', itemId:'g7g7g7'}));
+		mockList.add(new BCNewsItem({title:'Se7enty 7', url:'http://www.bungie.net', pubDate:'Wed Jan 16 09:42:25 +0000 2013', source:'bnet'}));
+		return mockList;
+	
 	}
 
 })();
