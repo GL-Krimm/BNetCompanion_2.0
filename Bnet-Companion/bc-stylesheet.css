@@ -292,7 +292,6 @@ ul.bc-news-list {
 	list-style-type:none;
 	color:#ffffff;
 	max-height:350px;
-	overflow-y:scroll;
 }
 
 li.bc-news-item {

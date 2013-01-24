@@ -15,6 +15,10 @@
 		
 		this.thumbnail = 'images/' + this.source + '.gif';
 		
+		if ( this.source == 'youtube') {
+			this.thumbnail = 'images/' + this.source + '.png';
+		}
+		
 		if ( itemHash.itemId ) {
 			this.itemId = itemHash.itemId;
 		} 

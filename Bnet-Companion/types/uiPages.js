@@ -9,6 +9,12 @@
 		_bnetClient = chrome.extension.getBackgroundPage().bnetClient;		
 		_pages.newsPage = new BCNewsPage(this);
 		_pages.newsPage.render();
+		
+		console.log(bcMenuButtons);
+		
+		bcMenuButtons.forEach(function(item) {
+			new BCNavButton(item.title, item.pageRef, item.img).render(document.getElementsByClassName('bc-bottom-nav')[0]);
+		});
 	};
 	
 	BNetCompanion.prototype.start = function() {

@@ -1,27 +1,27 @@
 // menu button
 (function() {	
-
-	var _title = null;
-	var _targetPage = null;
-	var _thumbnail = null;
 	
 	BCMenuItem = function(title, page, thumbnail) {
-		_title = title;
-		_targetPage = page;
-		_thumbnail = thumbnail;
-		
-		open = function() {
-			//_targetPage.render();
-		};
+		this._title = title;
+		this._targetPage = page;
+		this._thumbnail = 'images/' + thumbnail;
 	};
+	
+	/*
+	<li intref="news" id="bc-news-button" class="bc-nav-item bc-nav-active">
+		<img src="images/news-selected.png">
+		<br>
+		News
+	</li>
+	*/
 	
 	BCMenuItem.prototype.render = function(parent) {
 		var menuItemBox = parent.appendChild(document.createElement('li'));
 		var thumbNailBox = menuItemBox.appendChild(document.createElement('img'));
-		thumbNailBox.src = _thumbnail;
+		thumbNailBox.src = this._thumbnail;
 		
 		var menuItemText = menuItemBox.appendChild(document.createElement('span'));
-		menuItemText.innerText = _title;
+		menuItemText.innerText = this._title;
 		
 		var openSpan = menuItemBox.appendChild(document.createElement('span'));
 		openSpan.className = 'right';
@@ -44,7 +44,13 @@ function BCNavButton(title, target, thumbnail) {
 BCNavButton.prototype.render = function(parent) {
 	var btnBox = parent.appendChild(document.createElement('li'));
 	btnBox.className = 'bc-nav-item';
-	btnBox.innerText = _title;
+	
+	var img = btnBox.appendChild(document.createElement('img'));
+	img.src = this._thumbnail;
+	
+	btnBox.appendChild(document.createElement('br'));
+	
+	btnBox.appendChild(document.createTextNode(this._title));
 };
 	
 

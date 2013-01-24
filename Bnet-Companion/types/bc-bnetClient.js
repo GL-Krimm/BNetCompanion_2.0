@@ -32,6 +32,7 @@
 			try {
 				getTwitterFeed();
 				getBungieBlog();
+				getYoutubeFeed();
 			} catch ( e ) {
 				console.log('An exception occurred when attempting to fetch the news feed:');
 				console.log(e);
@@ -113,12 +114,52 @@
 		});
 	}
 	
-	var getYoutubeFeed = function() {};
+	var getYoutubeFeed = function() {
+		$j.ajax({
+			url:"https://gdata.youtube.com/feeds/api/users/bungie/uploads?max-results=10",
+			type:"GET",
+			async:false,
+			dataType:"XML",
+			success:function(data) {
+				$j($j(data).find('entry')).each(function() {
+					var item = {};
+					item.source = 'youtube';
+					item.title = $j(this).find('title').text();
+					item.title = item.title.substring(0,item.title.length / 2);
+					item.pubDate = $j(this).find('published').text();
+					
+					var links = $j(this).find('link');
+					
+					for ( i = 0; i < links.length; i++ ) {
+						var tLink = $j(links[i]).attr('href');
+						
+						if ( tLink.indexOf('watch') > -1 ) {
+							item.url = tLink;
+							break;
+						}
+						
+					}
+					_newsFeed.add(item);
+				});
+			}
+		});
+	};
 	
 	var getNewsFeedMock = function() { 
+	
+		console.log('mockingjay...');
 		var mockList = new BCNewsList();
 		mockList.add(new BCNewsItem({title:'Bungie has released Bungie.next to beta!', url:'http://www.bungie.net', pubDate:'Wed Jan 16 00:42:25 +0000 2013', source:'twitter', itemId:'g7g7g7'}));
 		mockList.add(new BCNewsItem({title:'Se7enty 7', url:'http://www.bungie.net', pubDate:'Wed Jan 16 09:42:25 +0000 2013', source:'bnet'}));
+		mockList.add(new BCNewsItem({title:'O Brave New World', url:'http://www.youtube.com', pubDate:'Wed Jan 16 09:42:25 +0000 2013', source:'youtube'}));
+		
+		mockList.add(new BCNewsItem({title:'Bungie has released Bungie.next to beta!', url:'http://www.bungie.net', pubDate:'Wed Jan 16 01:42:25 +0000 2013', source:'twitter', itemId:'g7g7g7'}));
+		mockList.add(new BCNewsItem({title:'Se7enty 7', url:'http://www.bungie.net', pubDate:'Wed Jan 16 10:42:25 +0000 2013', source:'bnet'}));
+		mockList.add(new BCNewsItem({title:'O Brave New World', url:'http://www.youtube.com', pubDate:'Wed Jan 16 10:42:25 +0000 2013', source:'youtube'}));
+		
+		mockList.add(new BCNewsItem({title:'Bungie has released Bungie.next to beta!', url:'http://www.bungie.net', pubDate:'Wed Jan 16 02:42:25 +0000 2013', source:'twitter', itemId:'g7g7g7'}));
+		mockList.add(new BCNewsItem({title:'Se7enty 7', url:'http://www.bungie.net', pubDate:'Wed Jan 16 11:42:25 +0000 2013', source:'bnet'}));
+		mockList.add(new BCNewsItem({title:'O Brave New World', url:'http://www.youtube.com', pubDate:'Wed Jan 16 12:42:25 +0000 2013', source:'youtube'}));
 		return mockList;
 	
 	}
