@@ -8,12 +8,19 @@
 	BNetCompanion = function() {
 		_bnetClient = chrome.extension.getBackgroundPage().bnetClient;		
 		_pages.newsPage = new BCNewsPage(this);
+		_pages.profilePage = new BCProfilePage(this);
 		_pages.newsPage.render();
+		
 		
 		console.log(bcMenuButtons);
 		
 		bcMenuButtons.forEach(function(item) {
-			new BCNavButton(item.title, item.pageRef, item.img).render(document.getElementsByClassName('bc-bottom-nav')[0]);
+			new BCNavButton(item.title, item.pageRef, item.img, item.rootPage).render(document.getElementsByClassName('bc-bottom-nav')[0]);
+		});
+		
+		this.bind('.bc-nav-item', 'click', function() {
+			$j('#bc-content').children().remove();
+			_pages[this.getAttribute('data-page-ref') + 'Page'].render();
 		});
 	};
 	
@@ -84,5 +91,20 @@
 		_sandbox.openItem(this.getAttribute('data-item-link'));
 	};
 	
+})();
+
+(function() {
+	var _sandbox = null;
+
+	BCProfilePage = function(sandbox) {
+		_sandbox = sandbox;
+	}
+	
+	BCProfilePage.prototype.render = function() {
+		
+		var parent = document.getElementById('bc-content');
+		
+			
+	};
 })();
 

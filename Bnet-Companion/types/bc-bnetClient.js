@@ -2,7 +2,8 @@
 	var $j = jQuery.noConflict();
 	var devMode = false;
 	var _newsFeed = null;	
-	var _bungieRssUrl = 'http://www.bungie.net/en-us/Rss/News';
+	var _bungieRssUrl = "http://www.bungie.net/en-us/Rss/News";
+	var _bungieLegacyRssUrl = "http://www.bungie.net/News/NewsRss.ashx";
 	
 	BcBnetClient = function() {
 		if ( localStorage.newsFeed ) {
@@ -32,6 +33,7 @@
 			try {
 				getTwitterFeed();
 				getBungieBlog();
+				getBungieLegacyBlog();
 				getYoutubeFeed();
 			} catch ( e ) {
 				console.log('An exception occurred when attempting to fetch the news feed:');
@@ -61,8 +63,7 @@
 	}
 	
 	var getBungieBlog = function() {
-		var bungieBlog = new Array();
-		
+	
 		var link, title, createdAt, item;
 		
 		$j.ajax({
@@ -85,8 +86,33 @@
 				});
 			}
 		});
+	};
+	
+	var getBungieLegacyBlog = function() {
+	
+		var link, title, createdAt, item;
+
+		$j.ajax({
+			url: _bungieLegacyRssUrl,
+			type:'GET',
+			dataType:'XML',
+			async:false,
+			success:function(data) {
+				
+				$j($j(data).find('item')).each(function() {						
+					
+					title = $j(this).find('title').text();
+					link = $j(this).find('link').text();
+					
+					createdAt = $j(this).find('pubDate').text().replace("+0000", "GMT");
+					
+					item = new BCNewsItem({title:title, url:link, pubDate:createdAt, source:'bnet'});
+					
+					_newsFeed.add(item);
+				});	
+			}
+		});
 		
-		return bungieBlog;
 	};
 	
 	var getTwitterFeed = function() {

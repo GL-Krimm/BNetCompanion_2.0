@@ -37,13 +37,23 @@
 
 BCNavButton.prototype = new BCMenuItem();
 
-function BCNavButton(title, target, thumbnail) {
+function BCNavButton(title, target, thumbnail, rootPage) {
 	BCMenuItem.call(this, title, target, thumbnail);
+	
+	if ( rootPage ) {
+		this._rootPage = rootPage;
+		this._thumbnail = 'images/' + title.toLowerCase() + '-selected.png'; 
+	}
 }
 
 BCNavButton.prototype.render = function(parent) {
 	var btnBox = parent.appendChild(document.createElement('li'));
-	btnBox.className = 'bc-nav-item';
+	btnBox.className = 'bc-nav-item ';
+	btnBox.setAttribute('data-page-ref', this._targetPage);
+	
+	if ( this._rootPage ) {
+		btnBox.className += ' bc-nav-active';
+	}
 	
 	var img = btnBox.appendChild(document.createElement('img'));
 	img.src = this._thumbnail;
