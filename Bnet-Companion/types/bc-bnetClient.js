@@ -42,7 +42,9 @@
 			
 		}
 				
-		localStorage.newsFeed = JSON.stringify(_newsFeed);
+		if ( !devMode ) {
+			localStorage.newsFeed = JSON.stringify(_newsFeed);
+		}				
 		
 		// detect and store latest news item
 		/*if ( localStorage.latestPubDate && _newsFeed[0] ) {
@@ -80,9 +82,7 @@
 					
 					createdAt = $j(this).find('pubDate').text().replace("+0000", "GMT");
 					
-					item = new BCNewsItem({title:title, url:link, pubDate:createdAt, source:'bnet'});
-					
-					_newsFeed.add(item);
+					_newsFeed.add({title:title, url:link, pubDate:createdAt, source:'bnet'});
 				});
 			}
 		});
@@ -106,9 +106,7 @@
 					
 					createdAt = $j(this).find('pubDate').text().replace("+0000", "GMT");
 					
-					item = new BCNewsItem({title:title, url:link, pubDate:createdAt, source:'bnet'});
-					
-					_newsFeed.add(item);
+					_newsFeed.add({title:title, url:link, pubDate:createdAt, source:'bnet'});
 				});	
 			}
 		});
@@ -132,8 +130,7 @@
 				//title, url, pubDate, source, itemId
 					link = "http://twitter.com/bungie/statuses/" + data[i].id_str;
 					
-					item = new BCNewsItem({title:data[i].text, url:link, pubDate:data[i].created_at, source:'twitter', itemId:data[i].id_str});
-					_newsFeed.add(item);
+					_newsFeed.add({title:data[i].text, url:link, pubDate:data[i].created_at, source:'twitter', itemId:data[i].id_str});
 				}
 			}
 		
@@ -175,17 +172,17 @@
 	
 		console.log('mockingjay...');
 		var mockList = new BCNewsList();
-		mockList.add(new BCNewsItem({title:'Bungie has released Bungie.next to beta!', url:'http://www.bungie.net', pubDate:'Wed Jan 16 00:42:25 +0000 2013', source:'twitter', itemId:'g7g7g7'}));
-		mockList.add(new BCNewsItem({title:'Se7enty 7', url:'http://www.bungie.net', pubDate:'Wed Jan 16 09:42:25 +0000 2013', source:'bnet'}));
-		mockList.add(new BCNewsItem({title:'O Brave New World', url:'http://www.youtube.com', pubDate:'Wed Jan 16 09:42:25 +0000 2013', source:'youtube'}));
+		mockList.add({title:'Bungie has released Bungie.next to beta!', url:'http://www.bungie.net', pubDate:'Wed Jan 16 00:42:25 +0000 2013', source:'twitter', itemId:'g7g7g7'});
+		mockList.add({title:'Se7enty 7', url:'http://www.bungie.net', pubDate:'Wed Jan 16 09:42:25 +0000 2013', source:'bnet'});
+		mockList.add({title:'O Brave New World', url:'http://www.youtube.com', pubDate:'Wed Jan 16 09:42:25 +0000 2013', source:'youtube'});
 		
-		mockList.add(new BCNewsItem({title:'Bungie has released Bungie.next to beta!', url:'http://www.bungie.net', pubDate:'Wed Jan 16 01:42:25 +0000 2013', source:'twitter', itemId:'g7g7g7'}));
-		mockList.add(new BCNewsItem({title:'Se7enty 7', url:'http://www.bungie.net', pubDate:'Wed Jan 16 10:42:25 +0000 2013', source:'bnet'}));
-		mockList.add(new BCNewsItem({title:'O Brave New World', url:'http://www.youtube.com', pubDate:'Wed Jan 16 10:42:25 +0000 2013', source:'youtube'}));
+		mockList.add({title:'Bungie has released Bungie.next to beta!', url:'http://www.bungie.net', pubDate:'Wed Jan 16 01:42:25 +0000 2013', source:'twitter', itemId:'g7g7g7'});
+		mockList.add({title:'Se7enty 7', url:'http://www.bungie.net', pubDate:'Wed Jan 16 10:42:25 +0000 2013', source:'bnet'});
+		mockList.add({title:'O Brave New World', url:'http://www.youtube.com', pubDate:'Wed Jan 16 10:42:25 +0000 2013', source:'youtube'});
 		
-		mockList.add(new BCNewsItem({title:'Bungie has released Bungie.next to beta!', url:'http://www.bungie.net', pubDate:'Wed Jan 16 02:42:25 +0000 2013', source:'twitter', itemId:'g7g7g7'}));
-		mockList.add(new BCNewsItem({title:'Se7enty 7', url:'http://www.bungie.net', pubDate:'Wed Jan 16 11:42:25 +0000 2013', source:'bnet'}));
-		mockList.add(new BCNewsItem({title:'O Brave New World', url:'http://www.youtube.com', pubDate:'Wed Jan 16 12:42:25 +0000 2013', source:'youtube'}));
+		mockList.add({title:'Bungie has released Bungie.next to beta!', url:'http://www.bungie.net', pubDate:'Wed Jan 16 02:42:25 +0000 2013', source:'twitter', itemId:'g7g7g7'});
+		mockList.add({title:'Se7enty 7', url:'http://www.bungie.net', pubDate:'Wed Jan 16 11:42:25 +0000 2013', source:'bnet'});
+		mockList.add({title:'O Brave New World', url:'http://www.youtube.com', pubDate:'Wed Jan 16 12:42:25 +0000 2013', source:'youtube'});
 		return mockList;
 	
 	}

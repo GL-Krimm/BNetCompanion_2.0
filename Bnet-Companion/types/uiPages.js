@@ -4,24 +4,18 @@
 	var $j = jQuery.noConflict();
 	var _bnetClient = null;
 	var _pages = {};
+	var _contentBody = null;
+	var _navMenuWidget = null;
 	
 	BNetCompanion = function() {
 		_bnetClient = chrome.extension.getBackgroundPage().bnetClient;		
-		_pages.newsPage = new BCNewsPage(this);
-		_pages.profilePage = new BCProfilePage(this);
-		_pages.newsPage.render();
+		_contentBody = document.getElementById('bc-content');
 		
+		_navMenuWidget = new BCNavMenuWidget(this);
+		_navMenuWidget.render();
 		
-		console.log(bcMenuButtons);
-		
-		bcMenuButtons.forEach(function(item) {
-			new BCNavButton(item.title, item.pageRef, item.img, item.rootPage).render(document.getElementsByClassName('bc-bottom-nav')[0]);
-		});
-		
-		this.bind('.bc-nav-item', 'click', function() {
-			$j('#bc-content').children().remove();
-			_pages[this.getAttribute('data-page-ref') + 'Page'].render();
-		});
+		_pages['newsPage'] = new BCNewsWidget(this);
+		_pages['newsPage'].render();
 	};
 	
 	BNetCompanion.prototype.start = function() {
@@ -34,77 +28,74 @@
 	BNetCompanion.prototype.bind = function(selector, event, handler) {
 		$j(selector).bind(event, handler);
 	};
+
+	BNetCompanion.prototype.on = function(parent, selector, event, handler) {
+		console.log('hi ho...');
+		$j(parent).on(event, selector, handler);
+	};
+	
+	BNetCompanion.prototype.openPage = function(pageKey) {
+		$j(_contentBody).children().remove();
+		_pages[pageKey + 'Page'].render();
+	};
 	
 	BNetCompanion.prototype.openItem = function(url) {
 		_bnetClient.openItem(url);
 	};
 	
 })();
-	
+
 (function() {
-	var _sandbox = null;
+	var _sandbox = null;	
 	
-	BCPage = function(sandbox) {
+	BCNewsWidget = function(sandbox) {
 		_sandbox = sandbox;
-	};
-	
-	BCPage.prototype.render = function() {
 		
 	};
 	
-})();
-
-(function() {
-	var _sandbox = null;
-
-	BCNewsPage = function(sandbox) {
-		_sandbox = sandbox;
-	}
-	
-	BCNewsPage.prototype.render = function() {
+	BCNewsWidget.prototype.render = function() {
+		var root = document.getElementById('bc-content');
 		
-		var list = _sandbox.getNewsFeed();
-		var keys = list.getKeys();
-		
-		if ( keys ) {
-			var titleElem = document.getElementById('bc-page-title');
-		titleElem.innerText = "Bungie News";
-
-		var contentElem = document.getElementById('bc-content');
-		var newsUl = contentElem.appendChild(document.createElement('ul'));
-		newsUl.id = 'bc-news';
+		var newsUl = root.appendChild(document.createElement('ul'));
 		newsUl.className = 'bc-news-list';
 		
-		keys.forEach(function(key) {
-			console.log(list.item(key));
-			list.item(key).render(newsUl);
-		});
+		var newsFeed = _sandbox.getNewsFeed();
 		
-		_sandbox.bind('.bc-news-item', 'click', openNewsItem);
-
+		for ( var i in newsFeed.keys ) {
+			if ( newsFeed.keys.hasOwnProperty(i) ) {
+				drawNewsItem(newsUl, newsFeed.items[newsFeed.keys[i]]);
+			}
 		}
+		_sandbox.bind('.bc-news-item', 'click', openNewsItem);
+	};
 		
-			
+	var drawNewsItem = function(parent, item) {
+		// set up the containing LI
+		var newsItemBox = parent.appendChild(document.createElement('li'));
+		newsItemBox.className = 'bc-news-item';
+		newsItemBox.setAttribute('data-item-link', item.url);
+		
+		// now add the image
+		var itemImg = newsItemBox.appendChild(document.createElement('img'));
+		itemImg.src = 'images/' + item.source + (item.source[0] == 'y' ? '.png' : '.gif');
+		
+		// render the title
+		var itemText = newsItemBox.appendChild(document.createElement('p'));
+		itemText.className = 'bc-news-details';
+		itemText.innerText = item.title.substring(0,60).concat('...');
+		
+		// lastly, the pubdate
+		var itemDate = newsItemBox.appendChild(document.createElement('span'));
+		itemDate.className = 'bc-news-pub-date';
+		itemDate.innerText = item.pubDate;
 	};
 	
-	openNewsItem = function() {
+	var openNewsItem = function() {
+		console.log('clicked! ');
+		console.log(this.getAttribute('data-item-link'));
 		_sandbox.openItem(this.getAttribute('data-item-link'));
 	};
 	
 })();
 
-(function() {
-	var _sandbox = null;
-
-	BCProfilePage = function(sandbox) {
-		_sandbox = sandbox;
-	}
-	
-	BCProfilePage.prototype.render = function() {
-		
-		var parent = document.getElementById('bc-content');
-		
-			
-	};
-})();
 

@@ -58,13 +58,7 @@
 		
 		if ( storedList ) {
 			this.keys = storedList.keys;
-			for (var item in storedList.items) {
-				
-				if ( storedList.items.hasOwnProperty(item) ) {
-					
-					this.items[item] = new BCNewsItem(storedList.items[item]);
-				} 
-			}
+			this.items = storedList.items;
 		}
 		
 	};
