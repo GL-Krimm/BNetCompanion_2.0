@@ -15,9 +15,10 @@
 		_navMenuWidget.render();
 		
 		_pages['newsPage'] = new BCNewsWidget(this);
-		_pages['newsPage'].render();
-		
 		_pages['morePage'] = new BCMorePageWidget(this);
+		
+		this.openPage('news');
+		
 	};
 	
 	BNetCompanion.prototype.start = function() {
@@ -32,7 +33,6 @@
 	};
 
 	BNetCompanion.prototype.on = function(parent, selector, event, handler) {
-		console.log('hi ho...');
 		$j(parent).on(event, selector, handler);
 	};
 	
@@ -41,6 +41,14 @@
 	};
 	
 	BNetCompanion.prototype.openPage = function(pageKey) {
+	
+		var pageTitle = pageKey.replace('Page','');
+		
+		pageTitle = pageTitle[0].toUpperCase() + pageTitle.substring(1, pageTitle.length);
+		
+		var pageTitleElem = document.getElementById('bc-page-title');
+		pageTitleElem.innerText = pageTitle;
+		
 		$j(_contentBody).children().remove();
 		
 		if ( _pages[pageKey + 'Page'] ) {
@@ -128,6 +136,8 @@
 			}
 			drawMenuItem(menuContainer, bcMorePageButtons[i], bottom);
 		}
+		
+		_sandbox.bind('.bc-nav-list li', 'click', openMenuItem);
 				
 	};
 	
@@ -159,7 +169,11 @@
 	};
 	
 	var openMenuItem = function() {
-	
+		if ( this.getAttribute('data-extern-page') ) {
+			_sandbox.openItem(this.getAttribute('data-extern-page'));
+		} else if (this.getAttribute('data-target-page')) {
+		
+		}
 	};
 	
 })();
