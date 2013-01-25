@@ -16,6 +16,8 @@
 		
 		_pages['newsPage'] = new BCNewsWidget(this);
 		_pages['newsPage'].render();
+		
+		_pages['morePage'] = new BCMorePageWidget(this);
 	};
 	
 	BNetCompanion.prototype.start = function() {
@@ -34,9 +36,16 @@
 		$j(parent).on(event, selector, handler);
 	};
 	
+	BNetCompanion.prototype.removeClass = function(selector, className) {
+		$j(selector).removeClass(className);
+	};
+	
 	BNetCompanion.prototype.openPage = function(pageKey) {
 		$j(_contentBody).children().remove();
-		_pages[pageKey + 'Page'].render();
+		
+		if ( _pages[pageKey + 'Page'] ) {
+			_pages[pageKey + 'Page'].render();
+		}		
 	};
 	
 	BNetCompanion.prototype.openItem = function(url) {
@@ -91,9 +100,66 @@
 	};
 	
 	var openNewsItem = function() {
-		console.log('clicked! ');
 		console.log(this.getAttribute('data-item-link'));
 		_sandbox.openItem(this.getAttribute('data-item-link'));
+	};
+	
+})();
+
+(function() {
+	var _sandbox = null;
+	
+	BCMorePageWidget = function(sandbox) {
+		_sandbox = sandbox;
+	};
+	
+	BCMorePageWidget.prototype.render = function() {
+		var root = document.getElementById('bc-content');
+		var menuContainer = root.appendChild(document.createElement('ul'));
+		menuContainer.className = 'bc-nav-list';
+		
+	    var i = 0;
+		var limit = bcMorePageButtons.length;
+		var bottom = true;
+		
+		for ( i; i < limit; i++ ) {
+			if ( i == limit - 1 ) {
+				bottom = false;
+			}
+			drawMenuItem(menuContainer, bcMorePageButtons[i], bottom);
+		}
+				
+	};
+	
+	var drawMenuItem = function(container, btn, bottom) {
+		var menuBtn = container.appendChild(document.createElement('li'));
+		
+		if ( bottom ) {
+			menuBtn.className = 'bottom-border';
+		}
+				
+		if ( btn.externPage ) {
+			menuBtn.setAttribute('data-extern-page', btn.externPage);
+		} else if ( btn.targetPage ) {
+			menuBtn.setAttribute('data-target-page', btn.targetPage);
+		}
+		
+		var img = menuBtn.appendChild(document.createElement('img'));
+		img.src = 'images/' + btn.img;
+		
+		var titleSpan = menuBtn.appendChild(document.createElement('span'));
+		titleSpan.innerText = btn.title;
+		
+		var arrowSpan = menuBtn.appendChild(document.createElement('span'));
+		arrowSpan.className = 'right';
+		
+		var strong = arrowSpan.appendChild(document.createElement('strong'));
+		strong.innerText = '>';
+		
+	};
+	
+	var openMenuItem = function() {
+	
 	};
 	
 })();

@@ -34,6 +34,10 @@
 	};
 	
 	var openTargetPage = function() {
+	
+		_sandbox.removeClass('.bc-nav-active', 'bc-nav-active');
+	
+		this.className += ' bc-nav-active';
 		_sandbox.openPage(this.getAttribute('data-page-ref'));
 	};
 	
