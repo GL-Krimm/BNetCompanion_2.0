@@ -26,7 +26,7 @@
 	};
 	
 	var updateNews = function() {
-	
+		console.log('running...');
 		if ( devMode ) {
 			_newsFeed = getNewsFeedMock();
 		} else {
@@ -147,9 +147,11 @@
 				$j($j(data).find('entry')).each(function() {
 					var item = {};
 					item.source = 'youtube';
-					item.title = $j(this).find('title').text();
+					item.title = $j(this).find('title').text();					
 					item.title = item.title.substring(0,item.title.length / 2);
 					item.pubDate = $j(this).find('published').text();
+					
+					console.log(item.pubDate);
 					
 					var links = $j(this).find('link');
 					
