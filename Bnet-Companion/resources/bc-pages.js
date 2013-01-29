@@ -1,0 +1,1 @@
+bcTextPages = [		{title:'privacy',messages:[bcTextResources.privacyStorage, bcTextResources.privacyPrivateDataPolicy]},		{title:'tos',messages:[bcTextResources.tosTradeMarks, bcTextResources.tosLicense]},		{title:'about',messages:[bcTextResources.aboutDescription]}	];

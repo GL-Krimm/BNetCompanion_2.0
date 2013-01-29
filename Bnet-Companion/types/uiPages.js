@@ -20,9 +20,11 @@
 		
 		_pages['newsPage'] = new BCNewsWidget(this);
 		_pages['morePage'] = new BCMorePageWidget(this);
-		_pages['privacyPage'] = new BCPrivacyPageWidget(this);
-		_pages['tosPage'] = new BCTermsOfUseWidget(this);
-		_pages['aboutPage'] = new BCAboutWidget(this);
+		
+		for ( var i = 0; i < bcTextPages.length; i ++ ) {
+			_pages[bcTextPages[i].title + 'Page'] = new BCGenericTextPage(this, bcTextPages[i].messages);
+		}
+
 		_pages['settingsPage'] = new BCSettingsWidget(this);
 		
 		this.openPage('news');
@@ -49,7 +51,6 @@
 	};
 	
 	BNetCompanion.prototype.getContentRoot = function() {
-		console.log('called getContentRoot');
 		return _contentRoot;
 	};
 	
@@ -75,6 +76,7 @@
 	
 })();
 
+// news widget
 (function() {
 	var _sandbox = null;	
 	
@@ -122,12 +124,12 @@
 	};
 	
 	var openNewsItem = function() {
-		console.log(this.getAttribute('data-item-link'));
 		_sandbox.openItem(this.getAttribute('data-item-link'));
 	};
 	
 })();
 
+// mroe page widget
 (function() {
 	var _sandbox = null;
 	
@@ -192,6 +194,7 @@
 	
 })();
 
+// back button widget
 (function() {
 	var _sandbox = null;
 	
@@ -215,71 +218,33 @@
 	
 })();
 
+// Generic Text Pages
 (function() {
 	var _sandbox = null;
 	var _backButton = null;
 	
-	BCPrivacyPageWidget = function(sandbox) {
+	BCGenericTextPage = function(sandbox, messages) {
 		_sandbox = sandbox;
+		console.log(_sandbox);
 		_backButton = new BCBackButton(_sandbox);
+		this._messages = messages;
 	};
 	
-	BCPrivacyPageWidget.prototype.render = function() {
+	BCGenericTextPage.prototype.render = function() {
 		_backButton.render();
-		_sandbox.getContentRoot().appendChild(document.createElement('br'));
-		var storage = _sandbox.getContentRoot().appendChild(document.createElement('p'));
+		var msgElem = null;
 		
-		storage.innerText = bcTextResources.privacyStorage;
+		this._messages.forEach(function(message) {
+			_sandbox.getContentRoot().appendChild(document.createElement('br'));
+			msgElem = _sandbox.getContentRoot().appendChild(document.createElement('p'));
+			msgElem.innerText = message;			
+		});
 		
-		_sandbox.getContentRoot().appendChild(document.createElement('br'));
-		
-		var other = _sandbox.getContentRoot().appendChild(document.createElement('p'));
-		other.innerText = bcTextResources.privacyPrivateDataPolicy;
 	};
 	
 })();
 
-(function() {
-	var _sandbox = null;
-	var _backButton = null;
-	
-	BCTermsOfUseWidget = function(sandbox) {
-		_sandbox = sandbox;
-		_backButton = new BCBackButton(_sandbox);
-	};
-	
-	BCTermsOfUseWidget.prototype.render = function() {
-		_backButton.render();
-		_sandbox.getContentRoot().appendChild(document.createElement('br'));
-		var storage = _sandbox.getContentRoot().appendChild(document.createElement('p'));
-		
-		storage.innerText = bcTextResources.tosTradeMarks;
-		
-		_sandbox.getContentRoot().appendChild(document.createElement('br'));
-		
-		var other = _sandbox.getContentRoot().appendChild(document.createElement('p'));
-		other.innerText = bcTextResources.tosLicense;
-	};
-})();
-
-(function() {
-	var _sandbox = null;
-	var _backButton = null;
-	
-	BCAboutWidget = function(sandbox) {
-		_sandbox = sandbox;
-		_backButton = new BCBackButton(_sandbox);
-	};
-	
-	BCAboutWidget.prototype.render = function() {
-		_backButton.render();
-		_sandbox.getContentRoot().appendChild(document.createElement('br'));
-		var storage = _sandbox.getContentRoot().appendChild(document.createElement('p'));
-		
-		storage.innerText = bcTextResources.aboutDescription;
-	};
-})();
-
+// Settings page
 (function() {
 	var _sandbox = null;
 	var _backButton = null;
