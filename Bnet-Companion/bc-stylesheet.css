@@ -190,6 +190,10 @@ span.right strong {
 	margin-left:5px;
 }
 
+.align-left { 
+	text-align: left;
+}
+
 span.span-button {
 	display:inline-block;
 	cursor:pointer;

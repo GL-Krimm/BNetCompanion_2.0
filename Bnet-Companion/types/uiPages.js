@@ -255,15 +255,34 @@
 	
 	BCSettingsWidget.prototype.render = function() {
 		_backButton.render();
-		_sandbox.getContentRoot().appendChild(document.createElement('br'));
-		var storage = _sandbox.getContentRoot().appendChild(document.createElement('p'));
+		
+		var container = _sandbox.getContentRoot().appendChild(document.createElement('div'));
+		container.className = 'align-left ';
+		
+		
+		container.appendChild(document.createElement('br'));
+		var storage = container.appendChild(document.createElement('p'));
 		
 		storage.innerText = bcTextResources.settingsConnectWithTwitter;
 		
-		_sandbox.getContentRoot().appendChild(document.createElement('br'));
+		container.appendChild(document.createElement('br'));
 		
-		var connectBtn = _sandbox.getContentRoot().appendChild(document.createElement('span'));
+		var connectBtn = container.appendChild(document.createElement('span'));
 		connectBtn.className = 'span-button'
 		connectBtn.innerText = 'Connect with Twitter';
+		connectBtn.setAttribute('style', 'margin-left:0.5em;');
+		
+		container.appendChild(document.createElement('br'));
+		container.appendChild(document.createElement('br'));
+		
+		//Play notification sounds? 
+		var notificationSpan = container.appendChild(document.createElement('span'));
+		notificationSpan.innerText = 'Play notification sounds?';
+		notificationSpan.setAttribute('style', 'margin-left:0.5em;');
+		
+		//<input type="checkbox" id="bc-play-sound-chk" checked="checked">
+		var chckBox = container.appendChild(document.createElement('input'));
+		chckBox.setAttribute('type', 'checkbox');
+		chckBox.setAttribute('style', 'margin-left:0.5em;');
 	};
 })();

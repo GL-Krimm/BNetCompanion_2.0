@@ -18,9 +18,7 @@
 	BCNewsList.prototype.add = function(item) {
 	
 		var key = item.source[0] + '-';
-		key += new Date(item.pubDate);//.getUTCSeconds();
-		
-		console.log(key);
+		key += new Date(item.pubDate);
 		
 		if ( !this.items[key] ) {
 			this.items[key] = item;
@@ -37,22 +35,14 @@
 	};
 	
 	var sortKeys = function(a,b) {
-		console.log(a);
-		var dateA = a.replace(/^[bty]-/,'');
-		console.log(dateA);
 		
+		var dateA = a.replace(/^[bty]-/,'');
 		dateA = new Date(dateA);
 		
-		console.log(b);
 		var dateB = b.replace(/^[bty]-/,'');
-		console.log(dateB);
-		
 		dateB = new Date(dateB);
-				
-		var delta = dateB - dateA;
 		
-		console.log(delta);
-		return delta;
+		return dateB - dateA;
 	};
 	
 })();
