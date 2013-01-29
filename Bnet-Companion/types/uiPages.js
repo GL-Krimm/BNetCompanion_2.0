@@ -6,8 +6,12 @@
 	var _pages = {};
 	var _contentBody = null;
 	var _navMenuWidget = null;
+	var _contentRoot = null;
 	
 	BNetCompanion = function() {
+	
+		_contentRoot = document.getElementById('bc-content');
+	
 		_bnetClient = chrome.extension.getBackgroundPage().bnetClient;		
 		_contentBody = document.getElementById('bc-content');
 		
@@ -16,6 +20,10 @@
 		
 		_pages['newsPage'] = new BCNewsWidget(this);
 		_pages['morePage'] = new BCMorePageWidget(this);
+		_pages['privacyPage'] = new BCPrivacyPageWidget(this);
+		_pages['tosPage'] = new BCTermsOfUseWidget(this);
+		_pages['aboutPage'] = new BCAboutWidget(this);
+		_pages['settingsPage'] = new BCSettingsWidget(this);
 		
 		this.openPage('news');
 		
@@ -38,6 +46,11 @@
 	
 	BNetCompanion.prototype.removeClass = function(selector, className) {
 		$j(selector).removeClass(className);
+	};
+	
+	BNetCompanion.prototype.getContentRoot = function() {
+		console.log('called getContentRoot');
+		return _contentRoot;
 	};
 	
 	BNetCompanion.prototype.openPage = function(pageKey) {
@@ -78,9 +91,10 @@
 		
 		var newsFeed = _sandbox.getNewsFeed();
 		
-		for ( var i in newsFeed.keys ) {
-			if ( newsFeed.keys.hasOwnProperty(i) ) {
-				drawNewsItem(newsUl, newsFeed.items[newsFeed.keys[i]]);
+		var keys = newsFeed.getKeys();
+		for ( var i in keys ) {
+			if ( keys.hasOwnProperty(i) ) {
+				drawNewsItem(newsUl, newsFeed.item( keys[i] ) );
 			}
 		}
 		_sandbox.bind('.bc-news-item', 'click', openNewsItem);
@@ -172,10 +186,120 @@
 		if ( this.getAttribute('data-extern-page') ) {
 			_sandbox.openItem(this.getAttribute('data-extern-page'));
 		} else if (this.getAttribute('data-target-page')) {
-		
+			_sandbox.openPage(this.getAttribute('data-target-page'));
 		}
 	};
 	
 })();
 
+(function() {
+	var _sandbox = null;
+	
+	BCBackButton = function(sandbox) {
+		_sandbox = sandbox;
+	};
+	
+	BCBackButton.prototype.render = function() {
+		var btn = _sandbox.getContentRoot().appendChild(document.createElement('span'));
+		btn.className = 'bc-button';
+		btn.id = 'bc-back-more';
+		btn.innerText = "< More";
+		
+		//special case for the more button - hook up click handler here
+		//since it may or may not be there in other views
+		_sandbox.bind(btn, 'click', function() {
+			_sandbox.openPage('more');
+		});
+		
+	};
+	
+})();
 
+(function() {
+	var _sandbox = null;
+	var _backButton = null;
+	
+	BCPrivacyPageWidget = function(sandbox) {
+		_sandbox = sandbox;
+		_backButton = new BCBackButton(_sandbox);
+	};
+	
+	BCPrivacyPageWidget.prototype.render = function() {
+		_backButton.render();
+		_sandbox.getContentRoot().appendChild(document.createElement('br'));
+		var storage = _sandbox.getContentRoot().appendChild(document.createElement('p'));
+		
+		storage.innerText = bcTextResources.privacyStorage;
+		
+		_sandbox.getContentRoot().appendChild(document.createElement('br'));
+		
+		var other = _sandbox.getContentRoot().appendChild(document.createElement('p'));
+		other.innerText = bcTextResources.privacyPrivateDataPolicy;
+	};
+	
+})();
+
+(function() {
+	var _sandbox = null;
+	var _backButton = null;
+	
+	BCTermsOfUseWidget = function(sandbox) {
+		_sandbox = sandbox;
+		_backButton = new BCBackButton(_sandbox);
+	};
+	
+	BCTermsOfUseWidget.prototype.render = function() {
+		_backButton.render();
+		_sandbox.getContentRoot().appendChild(document.createElement('br'));
+		var storage = _sandbox.getContentRoot().appendChild(document.createElement('p'));
+		
+		storage.innerText = bcTextResources.tosTradeMarks;
+		
+		_sandbox.getContentRoot().appendChild(document.createElement('br'));
+		
+		var other = _sandbox.getContentRoot().appendChild(document.createElement('p'));
+		other.innerText = bcTextResources.tosLicense;
+	};
+})();
+
+(function() {
+	var _sandbox = null;
+	var _backButton = null;
+	
+	BCAboutWidget = function(sandbox) {
+		_sandbox = sandbox;
+		_backButton = new BCBackButton(_sandbox);
+	};
+	
+	BCAboutWidget.prototype.render = function() {
+		_backButton.render();
+		_sandbox.getContentRoot().appendChild(document.createElement('br'));
+		var storage = _sandbox.getContentRoot().appendChild(document.createElement('p'));
+		
+		storage.innerText = bcTextResources.aboutDescription;
+	};
+})();
+
+(function() {
+	var _sandbox = null;
+	var _backButton = null;
+	
+	BCSettingsWidget = function(sandbox) {
+		_sandbox = sandbox;
+		_backButton = new BCBackButton(_sandbox);
+	};
+	
+	BCSettingsWidget.prototype.render = function() {
+		_backButton.render();
+		_sandbox.getContentRoot().appendChild(document.createElement('br'));
+		var storage = _sandbox.getContentRoot().appendChild(document.createElement('p'));
+		
+		storage.innerText = bcTextResources.settingsConnectWithTwitter;
+		
+		_sandbox.getContentRoot().appendChild(document.createElement('br'));
+		
+		var connectBtn = _sandbox.getContentRoot().appendChild(document.createElement('span'));
+		connectBtn.className = 'span-button'
+		connectBtn.innerText = 'Connect with Twitter';
+	};
+})();

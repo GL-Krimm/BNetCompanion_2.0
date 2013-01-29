@@ -16,8 +16,11 @@
 	};
 	
 	BCNewsList.prototype.add = function(item) {
+	
 		var key = item.source[0] + '-';
-		key += item.pubDate;
+		key += new Date(item.pubDate);//.getUTCSeconds();
+		
+		console.log(key);
 		
 		if ( !this.items[key] ) {
 			this.items[key] = item;
@@ -34,13 +37,22 @@
 	};
 	
 	var sortKeys = function(a,b) {
+		console.log(a);
 		var dateA = a.replace(/^[bty]-/,'');
+		console.log(dateA);
+		
 		dateA = new Date(dateA);
 		
+		console.log(b);
 		var dateB = b.replace(/^[bty]-/,'');
-		dateB = new Date(dateB);
+		console.log(dateB);
 		
-		return dateB - dateA;
+		dateB = new Date(dateB);
+				
+		var delta = dateB - dateA;
+		
+		console.log(delta);
+		return delta;
 	};
 	
 })();

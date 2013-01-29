@@ -1,6 +1,6 @@
 (function() {
 	var $j = jQuery.noConflict();
-	var devMode = false;
+	var devMode = true;
 	var _newsFeed = null;	
 	var _bungieRssUrl = "http://www.bungie.net/en-us/Rss/News";
 	var _bungieLegacyRssUrl = "http://www.bungie.net/News/NewsRss.ashx";
@@ -174,17 +174,11 @@
 	
 		console.log('mockingjay...');
 		var mockList = new BCNewsList();
+	
 		mockList.add({title:'Bungie has released Bungie.next to beta!', url:'http://www.bungie.net', pubDate:'Wed Jan 16 00:42:25 +0000 2013', source:'twitter', itemId:'g7g7g7'});
-		mockList.add({title:'Se7enty 7', url:'http://www.bungie.net', pubDate:'Wed Jan 16 09:42:25 +0000 2013', source:'bnet'});
+		mockList.add({title:'Se7enty 7 - o', url:'http://www.bungie.net', pubDate:'Thu Jan 17 09:42:25 +0000 2013', source:'bnet'});
 		mockList.add({title:'O Brave New World', url:'http://www.youtube.com', pubDate:'Wed Jan 16 09:42:25 +0000 2013', source:'youtube'});
-		
-		mockList.add({title:'Bungie has released Bungie.next to beta!', url:'http://www.bungie.net', pubDate:'Wed Jan 16 01:42:25 +0000 2013', source:'twitter', itemId:'g7g7g7'});
-		mockList.add({title:'Se7enty 7', url:'http://www.bungie.net', pubDate:'Wed Jan 16 10:42:25 +0000 2013', source:'bnet'});
-		mockList.add({title:'O Brave New World', url:'http://www.youtube.com', pubDate:'Wed Jan 16 10:42:25 +0000 2013', source:'youtube'});
-		
-		mockList.add({title:'Bungie has released Bungie.next to beta!', url:'http://www.bungie.net', pubDate:'Wed Jan 16 02:42:25 +0000 2013', source:'twitter', itemId:'g7g7g7'});
-		mockList.add({title:'Se7enty 7', url:'http://www.bungie.net', pubDate:'Wed Jan 16 11:42:25 +0000 2013', source:'bnet'});
-		mockList.add({title:'O Brave New World', url:'http://www.youtube.com', pubDate:'Wed Jan 16 12:42:25 +0000 2013', source:'youtube'});
+	
 		return mockList;
 	
 	}
