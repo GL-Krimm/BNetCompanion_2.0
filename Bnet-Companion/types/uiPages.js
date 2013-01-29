@@ -225,7 +225,6 @@
 	
 	BCGenericTextPage = function(sandbox, messages) {
 		_sandbox = sandbox;
-		console.log(_sandbox);
 		_backButton = new BCBackButton(_sandbox);
 		this._messages = messages;
 	};

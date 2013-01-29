@@ -1,6 +1,6 @@
 (function() {
 	var $j = jQuery.noConflict();
-	var devMode = true;
+	var devMode = false;
 	var _newsFeed = null;	
 	var _bungieRssUrl = "http://www.bungie.net/en-us/Rss/News";
 	var _bungieLegacyRssUrl = "http://www.bungie.net/News/NewsRss.ashx";
@@ -26,7 +26,7 @@
 	};
 	
 	var updateNews = function() {
-		console.log('running...');
+		
 		if ( devMode ) {
 			_newsFeed = getNewsFeedMock();
 		} else {
@@ -151,8 +151,6 @@
 					item.title = item.title.substring(0,item.title.length / 2);
 					item.pubDate = $j(this).find('published').text();
 					
-					console.log(item.pubDate);
-					
 					var links = $j(this).find('link');
 					
 					for ( i = 0; i < links.length; i++ ) {
@@ -172,7 +170,6 @@
 	
 	var getNewsFeedMock = function() { 
 	
-		console.log('mockingjay...');
 		var mockList = new BCNewsList();
 	
 		mockList.add({title:'Bungie has released Bungie.next to beta!', url:'http://www.bungie.net', pubDate:'Wed Jan 16 00:42:25 +0000 2013', source:'twitter', itemId:'g7g7g7'});
