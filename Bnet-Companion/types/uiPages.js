@@ -74,6 +74,14 @@
 		_bnetClient.openItem(url);
 	};
 	
+	BNetCompanion.prototype.getNotificationSetting = function() {
+		return _bnetClient.getPlayNotifications();
+	};	
+
+	BNetCompanion.prototype.setNotificationSetting = function(value) {
+		return _bnetClient.setPlayNotifications(value);
+	};	
+	
 })();
 
 // news widget
@@ -277,12 +285,20 @@
 		
 		//Play notification sounds? 
 		var notificationSpan = container.appendChild(document.createElement('span'));
-		notificationSpan.innerText = 'Play notification sounds?';
+		notificationSpan.innerText = 'Play notification sound?';
 		notificationSpan.setAttribute('style', 'margin-left:0.5em;');
 		
-		//<input type="checkbox" id="bc-play-sound-chk" checked="checked">
 		var chckBox = container.appendChild(document.createElement('input'));
 		chckBox.setAttribute('type', 'checkbox');
 		chckBox.setAttribute('style', 'margin-left:0.5em;');
+		chckBox.checked = _sandbox.getNotificationSetting() == 'true';	
+		
+		_sandbox.bind(chckBox, 'change', changeNotificationSettings);
+		
+	};
+	
+	var changeNotificationSettings = function() {
+		_sandbox.setNotificationSetting(this.checked);
+		console.log(_sandbox.getNotificationSetting());
 	};
 })();

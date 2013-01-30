@@ -4,7 +4,6 @@
 	var _newsFeed = null;	
 	var _bungieRssUrl = "http://www.bungie.net/en-us/Rss/News";
 	var _bungieLegacyRssUrl = "http://www.bungie.net/News/NewsRss.ashx";
-	var _playNotificationSound = null;
 	var _soundNode = null;
 	
 	BcBnetClient = function() {
@@ -15,19 +14,15 @@
 			_newsFeed = new BCNewsList();
 		}
 	
-		_playNotificationSound = localStorage.playNotificationsSound || true;
-		console.log("play sounds? " + _playNotificationSound);
+		// set or initialize the play notification setting
+		localStorage.playNotificationsSound = localStorage.playNotificationsSound ? localStorage.playNotificationsSound : true;
+				
+		_soundNode = document.createElement('audio');
+		_soundNode.id = 'bc-notification';
+		_soundNode.setAttribute('type', 'audio/mp3');
+		_soundNode.setAttribute('src', 'sounds/notification.mp3');
+		document.body.appendChild(_soundNode);
 		
-		if ( _playNotificationSound ) {
-			_soundNode = document.createElement('audio');
-			
-			_soundNode.id = 'bc-notification';
-			_soundNode.setAttribute('type', 'audio/mp3');
-			_soundNode.setAttribute('src', 'sounds/notification.mp3');
-			
-			document.body.appendChild(_soundNode);
-		}
-	
 		updateNews();
 	};
 	
@@ -41,15 +36,14 @@
 	
 	BcBnetClient.prototype.setPlayNotifications = function(value) {	
 		localStorage.playNotificationsSound = value;
-		_playNotificationSound = value;		
 	};
 
 	BcBnetClient.prototype.getPlayNotifications = function() {	
-		return _playNotificationSound;
+		return localStorage.playNotificationsSound;
 	};
 
 	BcBnetClient.prototype.playNotificationSound = function() {	
-		if ( _soundNode && _playNotificationSound ) {
+		if ( localStorage.playNotificationsSound ) {
 			_soundNode.play();
 		}
 	};
