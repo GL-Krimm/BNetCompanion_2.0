@@ -8,6 +8,13 @@
 	
 	BcBnetClient = function() {
 	
+		// treat this object as a singleton; not sure how the
+		if ( arguments.callee._singletonInstance ) {
+			return arguments.callee._singletonInstance;
+		}
+		
+		arguments.callee._singletonInstance = this;
+	
 		if ( localStorage.newsFeed ) {
 			_newsFeed = new BCNewsList(JSON.parse(localStorage.newsFeed));
 		} else {
@@ -46,6 +53,10 @@
 		if ( localStorage.playNotificationsSound ) {
 			_soundNode.play();
 		}
+	};
+
+	BcBnetClient.prototype.setTwitterAuthToken = function(token) {	
+		localStorage.twitterAuthToken = token;
 	};
 	
 	var updateNews = function() {
