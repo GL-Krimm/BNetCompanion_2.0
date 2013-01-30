@@ -36,8 +36,18 @@
 	var openTargetPage = function() {
 	
 		_sandbox.removeClass('.bc-nav-active', 'bc-nav-active');
+		
+		//set thumbnails to default
+		var imgs = _menuContainer.getElementsByTagName('img');
+		for ( var i = 0; i < imgs.length; i++ ) {
+			imgs[i].src = imgs[i].src.replace('-selected','');
+		}
 	
 		this.className += ' bc-nav-active';
+		
+		var img = this.getElementsByTagName('img')[0];
+		img.src = img.src.replace('.','-selected.');
+		
 		_sandbox.openPage(this.getAttribute('data-page-ref'));
 	};
 	
