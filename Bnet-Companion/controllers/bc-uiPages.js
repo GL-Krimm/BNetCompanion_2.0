@@ -32,9 +32,6 @@
 		
 	};
 	
-	BNetCompanion.prototype.start = function() {
-	};
-	
 	BNetCompanion.prototype.getNewsFeed = function() {
 		return _bnetClient.getNews();
 	};
@@ -82,7 +79,7 @@
 	BNetCompanion.prototype.setNotificationSetting = function(value) {
 		return _bnetClient.setPlayNotifications(value);
 	};	
-	
+		
 })();
 
 // news widget
