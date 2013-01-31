@@ -12,7 +12,13 @@
 	};
 	
 	BCNewsList.prototype.getKeys = function() {
-		return this.keys.sort(sortKeys);
+		return this.keys;
+	};
+	
+	// sorts the list of keys then returns the top one
+	BCNewsList.prototype.getLatestEntry = function() {
+		this.keys = this.keys.sort(sortKeys);
+		return this.keys[0];
 	};
 	
 	BCNewsList.prototype.add = function(item) {

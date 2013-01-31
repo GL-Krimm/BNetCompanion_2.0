@@ -18,6 +18,7 @@
 		_navMenuWidget = new BCNavMenuWidget(this);
 		_navMenuWidget.render();
 		
+		_pages['profilePage'] = new BCProfilePageWidget(this);
 		_pages['newsPage'] = new BCNewsWidget(this);
 		_pages['morePage'] = new BCMorePageWidget(this);
 		
@@ -137,29 +138,37 @@
 	
 })();
 
-// mroe page widget
+//profile page widget
 (function() {
 	var _sandbox = null;
 	
+	BCProfilePageWidget = function(sandbox) {
+		_sandbox = sandbox;
+		this.menu = new BCInPageMenuWidget(_sandbox, bcProfilePageButtons);
+	};
+	
+	BCProfilePageWidget.prototype.render = function() {
+		var root = document.getElementById('bc-content');
+		
+		this.menu.render(root);
+	};	
+	
+})();
+
+// mroe page widget
+(function() {
+	var _sandbox = null;
+	var _menuRenderer = null;
+	
 	BCMorePageWidget = function(sandbox) {
 		_sandbox = sandbox;
+		_menuRenderer = new BCInPageMenuWidget(_sandbox, bcMorePageButtons);
 	};
 	
 	BCMorePageWidget.prototype.render = function() {
 		var root = document.getElementById('bc-content');
-		var menuContainer = root.appendChild(document.createElement('ul'));
-		menuContainer.className = 'bc-nav-list';
 		
-	    var i = 0;
-		var limit = bcMorePageButtons.length;
-		var bottom = true;
-		
-		for ( i; i < limit; i++ ) {
-			if ( i == limit - 1 ) {
-				bottom = false;
-			}
-			drawMenuItem(menuContainer, bcMorePageButtons[i], bottom);
-		}
+		_menuRenderer.render(root);
 		
 		_sandbox.bind('.bc-nav-list li', 'click', openMenuItem);
 				
@@ -246,6 +255,61 @@
 			msgElem = _sandbox.getContentRoot().appendChild(document.createElement('p'));
 			msgElem.innerText = message;			
 		});
+		
+	};
+	
+})();
+
+// generic in-page menu 'sub-widget'
+(function() {
+	var _sandbox = null;
+	
+	BCInPageMenuWidget = function(sandbox, menu) {
+		_sandbox = sandbox;
+		this.menu = menu;
+	};
+	//this.menu
+	BCInPageMenuWidget.prototype.render = function(rootElem) {
+		var menuContainer = rootElem.appendChild(document.createElement('ul'));
+		menuContainer.className = 'bc-nav-list';
+		
+	    var i = 0;
+		var limit = this.menu.length;
+		var bottom = true;
+		
+		for ( i; i < limit; i++ ) {
+			if ( i == limit - 1 ) {
+				bottom = false;
+			}
+			drawMenuItem(menuContainer, this.menu[i], bottom);
+		}
+				
+	};
+	
+	var drawMenuItem = function(container, btn, bottom) {
+		var menuBtn = container.appendChild(document.createElement('li'));
+		
+		if ( bottom ) {
+			menuBtn.className = 'bottom-border';
+		}
+				
+		if ( btn.externPage ) {
+			menuBtn.setAttribute('data-extern-page', btn.externPage);
+		} else if ( btn.targetPage ) {
+			menuBtn.setAttribute('data-target-page', btn.targetPage);
+		}
+		
+		var img = menuBtn.appendChild(document.createElement('img'));
+		img.src = 'images/' + btn.img;
+		
+		var titleSpan = menuBtn.appendChild(document.createElement('span'));
+		titleSpan.innerText = btn.title;
+		
+		var arrowSpan = menuBtn.appendChild(document.createElement('span'));
+		arrowSpan.className = 'right';
+		
+		var strong = arrowSpan.appendChild(document.createElement('strong'));
+		strong.innerText = '>';
 		
 	};
 	

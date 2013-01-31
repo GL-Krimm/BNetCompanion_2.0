@@ -1,6 +1,6 @@
 (function() {
 	var $j = jQuery.noConflict();
-	var devMode = false;
+	var devMode = true;
 	var _newsFeed = null;	
 	var _bungieRssUrl = "http://www.bungie.net/en-us/Rss/News";
 	var _bungieLegacyRssUrl = "http://www.bungie.net/News/NewsRss.ashx";
@@ -50,13 +50,17 @@
 	};
 
 	BcBnetClient.prototype.playNotificationSound = function() {	
-		if ( localStorage.playNotificationsSound ) {
-			_soundNode.play();
-		}
+		playNewNewsSound();
 	};
 
 	BcBnetClient.prototype.setTwitterAuthToken = function(token) {	
 		localStorage.twitterAuthToken = token;
+	};
+	
+	var playNewNewsSound = function() {
+		if ( localStorage.playNotificationsSound == 'true') {
+			_soundNode.play();
+		}
 	};
 	
 	var updateNews = function() {
@@ -76,23 +80,30 @@
 			
 		}
 				
-		if ( !devMode ) {
+		//if ( !devMode ) {
 			localStorage.newsFeed = JSON.stringify(_newsFeed);
-		}				
+		//}				
 		
-		// detect and store latest news item
-		/*if ( localStorage.latestPubDate && _newsFeed[0] ) {
-			var fetched = new Date(_newsFeed[0]._pubDate);
-			var stored = new Date(localStorage.latestPubDate);
+		try {
+			var latestEntry = _newsFeed.getLatestEntry().replace(/^[bty]-/,'');
 			
-			if ( fetched > stored ) {
-				// new item detected. Notify user.
-				localStorage.latestPubDate = _newsFeed[0]._pubDate;
+			// detect and store latest news item
+			if ( localStorage.latestPubDate && latestEntry ) {
+				var fetched = new Date(latestEntry);
+				var stored = new Date(localStorage.latestPubDate);
+				
+				if ( fetched > stored ) {
+					// new item detected. Notify user.
+					localStorage.latestPubDate = latestEntry;
+					playNewNewsSound();
+				}
+				
+			} else {
+				localStorage.latestPubDate = latestEntry;
 			}
-			
-		} else {
-			localStorage.latestPubDate = _newsFeed[0]._pubDate;
-		}*/
+		} catch ( e ) {
+			console.log(e);
+		}
 		
 		// update every 30 seconds after a complete update
 		setTimeout(arguments.callee, 30 * 1000); 		
@@ -205,13 +216,22 @@
 	var getNewsFeedMock = function() { 
 	
 		var mockList = new BCNewsList();
-	
-		mockList.add({title:'Bungie has released Bungie.next to beta!', url:'http://www.bungie.net', pubDate:'Wed Jan 16 00:42:25 +0000 2013', source:'twitter', itemId:'g7g7g7'});
-		mockList.add({title:'Se7enty 7 - o', url:'http://www.bungie.net', pubDate:'Thu Jan 17 09:42:25 +0000 2013', source:'bnet'});
-		mockList.add({title:'O Brave New World', url:'http://www.youtube.com', pubDate:'Wed Jan 16 09:42:25 +0000 2013', source:'youtube'});
-	
-		return mockList;
-	
+		
+		var limit = 1;
+		var currentItem = null;
+		var title = null;
+		while (limit < 4) {
+			
+			currentItem = new Date();
+			currentItem.setHours(currentItem.getHours() + limit);
+			
+			title = "item: " + currentItem.toString()
+			
+			mockList.add({title:title,url:'http://www.bungie.net',pubDate:currentItem.toString(),source:'bnet'});
+			
+			limit++;
+		}
+		return mockList;	
 	}
 
 })();

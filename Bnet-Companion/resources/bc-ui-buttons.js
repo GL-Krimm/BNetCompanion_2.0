@@ -11,3 +11,9 @@ bcMorePageButtons = [
 		{title:'About',img:'Septagon.png',targetPage:'about'},
 		{title:'Settings',img:'settings.png',targetPage:'settings'}
 	];
+	
+bcProfilePageButtons = [
+		{title:'Friends',img:'bnet.gif',externPage:'http://www.bungie.net'},
+		{title:'Messages',img:'message.png',targetPage:'privacy'}//,
+		//{title:'Disconnect from BNet',img:'power.png',targetPage:'tos'}
+	];
