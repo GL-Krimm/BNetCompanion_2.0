@@ -7,6 +7,7 @@
 	var _contentBody = null;
 	var _navMenuWidget = null;
 	var _contentRoot = null;
+	var _currentPageKey = null;
 	
 	BNetCompanion = function() {
 	
@@ -29,7 +30,7 @@
 		_pages['settingsPage'] = new BCSettingsWidget(this);
 		
 		this.openPage('news');
-		
+		this.checkForAndRenderNewNews();		
 	};
 	
 	BNetCompanion.prototype.getNewsFeed = function() {
@@ -53,19 +54,7 @@
 	};
 	
 	BNetCompanion.prototype.openPage = function(pageKey) {
-	
-		var pageTitle = pageKey.replace('Page','');
-		
-		pageTitle = pageTitle[0].toUpperCase() + pageTitle.substring(1, pageTitle.length);
-		
-		var pageTitleElem = document.getElementById('bc-page-title');
-		pageTitleElem.innerText = pageTitle;
-		
-		$j(_contentBody).children().remove();
-		
-		if ( _pages[pageKey + 'Page'] ) {
-			_pages[pageKey + 'Page'].render();
-		}		
+		openPageFromKey(pageKey);	
 	};
 	
 	BNetCompanion.prototype.openItem = function(url) {
@@ -78,7 +67,36 @@
 
 	BNetCompanion.prototype.setNotificationSetting = function(value) {
 		return _bnetClient.setPlayNotifications(value);
-	};	
+	};
+
+	// responsible for finding and rendering new news
+	// items in the event the window is still open when
+	// new news is received
+	BNetCompanion.prototype.checkForAndRenderNewNews = function() {
+		console.log('running....');
+		if ( ( _currentPageKey == 'news' ) && localStorage.newItemsFetched == 'true' ) {
+			localStorage.newItemsFetched = false;
+			openPageFromKey('news');
+		}
+		setTimeout(arguments.callee,1000);
+	};
+	
+	var openPageFromKey = function(pageKey) {
+		_currentPageKey = pageKey;
+	
+		var pageTitle = pageKey.replace('Page','');
+		
+		pageTitle = pageTitle[0].toUpperCase() + pageTitle.substring(1, pageTitle.length);
+		
+		var pageTitleElem = document.getElementById('bc-page-title');
+		pageTitleElem.innerText = pageTitle;
+		
+		$j(_contentBody).children().remove();
+		
+		if ( _pages[pageKey + 'Page'] ) {
+			_pages[pageKey + 'Page'].render();
+		}	
+	};
 		
 })();
 
@@ -87,8 +105,7 @@
 	var _sandbox = null;	
 	
 	BCNewsWidget = function(sandbox) {
-		_sandbox = sandbox;
-		
+		_sandbox = sandbox;		
 	};
 	
 	BCNewsWidget.prototype.render = function() {

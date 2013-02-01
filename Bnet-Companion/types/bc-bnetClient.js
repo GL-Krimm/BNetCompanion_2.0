@@ -5,6 +5,7 @@
 	var _bungieRssUrl = "http://www.bungie.net/en-us/Rss/News";
 	var _bungieLegacyRssUrl = "http://www.bungie.net/News/NewsRss.ashx";
 	var _soundNode = null;
+	var _newItemsCallback = null;
 	
 	BcBnetClient = function() {
 	
@@ -95,6 +96,7 @@
 				if ( fetched > stored ) {
 					// new item detected. Notify user.
 					localStorage.latestPubDate = latestEntry;
+					localStorage.newItemsFetched = true;
 					playNewNewsSound();
 				}
 				
