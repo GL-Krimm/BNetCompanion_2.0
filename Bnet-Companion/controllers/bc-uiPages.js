@@ -73,7 +73,6 @@
 	// items in the event the window is still open when
 	// new news is received
 	BNetCompanion.prototype.checkForAndRenderNewNews = function() {
-		console.log('running....');
 		if ( ( _currentPageKey == 'news' ) && localStorage.newItemsFetched == 'true' ) {
 			localStorage.newItemsFetched = false;
 			openPageFromKey('news');

@@ -163,7 +163,7 @@
 	var getTwitterFeed = function() {
 		var feedData = new Array();
 		
-		var twitterUrl = "http://api.twitter.com/1/statuses/user_timeline.json?user_id=26280712&count=40";
+		var twitterUrl = "http://api.twitter.com/1/statuses/user_timeline.json?user_id=26280712&count=40&include_rts=1";
 		
 		var link;
 		var item;
