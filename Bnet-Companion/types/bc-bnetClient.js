@@ -55,7 +55,52 @@
 	};
 
 	BcBnetClient.prototype.setTwitterAuthToken = function(token) {	
-		localStorage.twitterAuthToken = token;
+		if ( token ) {
+			localStorage.twitterAuthToken = token;
+		}		
+	};
+	
+	BcBnetClient.prototype.signIntoTwitter = function() {	
+		var callbackString = window.top.location + "?t=" + Date.now();
+		var result = OAuthSimple().sign({
+			action:"GET",
+			method:"HMAC-SHA1",
+			type:"text",
+			path:"https://api.twitter.com/oauth/request_token",
+			parameters:{
+				oauth_version:"1.0",
+				oauth_signature_method:"HMAC-SHA1",
+				oauth_callback:window.top.location
+			},
+			signatures:{
+				consumer_key:TwitterConsumerKey,
+				shared_secret:TwitterConsumerSecret
+			}
+		});
+		
+		$j.ajax({
+			url:result.signed_url,
+			success:function(data) {
+			
+				var requestToken = null;
+				
+				data=data.split("&");
+				for (var i in data) {
+					var node = data[i].split("=");
+					
+					if ( node[0] == "oauth_token" ) {
+						requestToken = node[1];
+					}
+					
+				}
+				if ( requestToken ) {
+					chrome.tabs.create({
+						url:"https://api.twitter.com/oauth/authorize?oauth_token=" + requestToken
+					});
+				}
+				
+			}
+		});
 	};
 	
 	var playNewNewsSound = function() {
@@ -161,16 +206,69 @@
 	};
 	
 	var getTwitterFeed = function() {
-		var feedData = new Array();
 		
-		var twitterUrl = "http://api.twitter.com/1/statuses/user_timeline.json?user_id=26280712&count=40&include_rts=1";
 		
-		var link;
-		var item;
+		if ( localStorage.twitterAuthToken ) {
+			getSignedTwitterFeed();
+		} else {
+			var twitterUrl = "http://api.twitter.com/1/statuses/user_timeline.json?user_id=26280712&count=40&include_rts=1";
+			
+			var link;
+			var item;
+			
+			$j.ajax({
+				url:twitterUrl,
+				dataType:'JSON',
+				async:false,
+				success:function(data) {
+					for ( var i = 0; i < data.length; i++ ) {
+					//title, url, pubDate, source, itemId
+						link = "http://twitter.com/bungie/statuses/" + data[i].id_str;
+						
+						_newsFeed.add({title:data[i].text, url:link, pubDate:data[i].created_at, source:'twitter', itemId:data[i].id_str});
+					}
+				}
+			
+			});
+		}	
+		
+	};
+	
+	var getSignedTwitterFeed = function() {
+		var request = null;
+		var twitterUrl = "https://api.twitter.com/1/statuses/user_timeline.json";
+		
+		if ( localStorage.twitterAuthToken ) {
+			request = OAuthSimple().sign({
+				action:"GET",
+				method:"HMAC-SHA1",
+				dataType:"JSON",
+				path:twitterUrl,
+				parameters:{
+					user_id:26280712,
+					include_rts:1,
+					count:40,
+					oauth_version:"1.0",
+					oauth_signature_method:"HMAC-SHA1"
+				},
+				signatures:{
+					consumer_key:TwitterConsumerKey,
+					shared_secret:TwitterConsumerSecret,
+					auth_token:localStorage.twitterAuthToken
+				}
+			});
+		} else {
+			request = {};
+			request.url = twitterUrl;
+			request.dataType = 'JSON';
+		}
+		
+		console.log(request.signed_url);
 		
 		$j.ajax({
-			url:twitterUrl,
-			dataType:'JSON',
+			url:request.signed_url || request.url,
+			dataType:request.dataType, //"JSON",
+			type:"GET",
 			async:false,
 			success:function(data) {
 				for ( var i = 0; i < data.length; i++ ) {
@@ -180,9 +278,8 @@
 					_newsFeed.add({title:data[i].text, url:link, pubDate:data[i].created_at, source:'twitter', itemId:data[i].id_str});
 				}
 			}
-		
 		});
-	}
+	};
 	
 	var getYoutubeFeed = function() {
 		$j.ajax({
@@ -235,5 +332,8 @@
 		}
 		return mockList;	
 	}
+	
+	var TwitterConsumerKey = 'lwCCH94saDQSOqEcuGD7w';
+	var TwitterConsumerSecret = 'Au2wXTBYyEyaDW2lv1jMDAtFj6aUhyRBxYf9h9YfA';
 
 })();

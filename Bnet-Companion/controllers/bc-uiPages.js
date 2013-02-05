@@ -80,6 +80,10 @@
 		setTimeout(arguments.callee,1000);
 	};
 	
+	BNetCompanion.prototype.signIntoTwitter = function() {
+		_bnetClient.signIntoTwitter();
+	};
+	
 	var openPageFromKey = function(pageKey) {
 		_currentPageKey = pageKey;
 	
@@ -168,7 +172,7 @@
 	
 })();
 
-// mroe page widget
+// more page widget
 (function() {
 	var _sandbox = null;
 	var _menuRenderer = null;
@@ -357,6 +361,8 @@
 		connectBtn.innerText = 'Connect with Twitter';
 		connectBtn.setAttribute('style', 'margin-left:0.5em;');
 		
+		_sandbox.bind(connectBtn, 'click', _sandbox.signIntoTwitter);
+		
 		container.appendChild(document.createElement('br'));
 		container.appendChild(document.createElement('br'));
 		
@@ -371,7 +377,7 @@
 		chckBox.checked = _sandbox.getNotificationSetting() == 'true';	
 		
 		_sandbox.bind(chckBox, 'change', changeNotificationSettings);
-		
+				
 	};
 	
 	var changeNotificationSettings = function() {
