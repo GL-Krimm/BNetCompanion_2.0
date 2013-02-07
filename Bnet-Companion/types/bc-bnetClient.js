@@ -53,11 +53,15 @@
 	BcBnetClient.prototype.playNotificationSound = function() {	
 		playNewNewsSound();
 	};
-
+	
 	BcBnetClient.prototype.setTwitterAuthToken = function(token) {	
 		if ( token ) {
 			localStorage.twitterAuthToken = token;
 		}		
+	};
+
+	BcBnetClient.prototype.clientConnectedToTwitter = function() {	
+		return localStorage.hasOwnProperty('twitterAuthToken');	
 	};
 	
 	BcBnetClient.prototype.signIntoTwitter = function() {	
@@ -101,6 +105,10 @@
 				
 			}
 		});
+	};
+	
+	BcBnetClient.prototype.signOutFromTwitter = function() {
+		delete localStorage.twitterAuthToken;
 	};
 	
 	var playNewNewsSound = function() {

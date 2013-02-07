@@ -49,6 +49,24 @@
 		$j(selector).removeClass(className);
 	};
 	
+	BNetCompanion.prototype.focus = function(selector) {
+		$j(selector).focus();
+	};
+	
+	BNetCompanion.prototype.slideRemove = function(selector) {
+		$j(selector).slideUp('sloe', function() {
+			$j(selector).remove();
+		});
+	};
+		
+	BNetCompanion.prototype.slideDown = function(selector) {
+		$j(selector).slideDown('slow');
+	};
+
+	BNetCompanion.prototype.slideUp = function(selector) {
+		$j(selector).slideUp('slow');
+	};
+	
 	BNetCompanion.prototype.getContentRoot = function() {
 		return _contentRoot;
 	};
@@ -60,6 +78,10 @@
 	BNetCompanion.prototype.openItem = function(url) {
 		_bnetClient.openItem(url);
 	};
+	
+	BNetCompanion.prototype.connectedToTwitter = function() {
+		return _bnetClient.clientConnectedToTwitter();
+	};	
 	
 	BNetCompanion.prototype.getNotificationSetting = function() {
 		return _bnetClient.getPlayNotifications();
@@ -84,12 +106,17 @@
 		_bnetClient.signIntoTwitter();
 	};
 	
+	BNetCompanion.prototype.signOutFromTwitter = function() {
+		_bnetClient.signOutFromTwitter();
+		openPageFromKey(_currentPageKey);
+	};
+	
 	var openPageFromKey = function(pageKey) {
 		_currentPageKey = pageKey;
 	
-		var pageTitle = pageKey.replace('Page','');
+		//var pageTitle = pageKey.replace('Page','');
 		
-		pageTitle = pageTitle[0].toUpperCase() + pageTitle.substring(1, pageTitle.length);
+		var pageTitle = pageKey[0].toUpperCase() + pageKey.substring(1, pageKey.length);
 		
 		var pageTitleElem = document.getElementById('bc-page-title');
 		pageTitleElem.innerText = pageTitle;
@@ -126,6 +153,7 @@
 			}
 		}
 		_sandbox.bind('.bc-news-item', 'click', openNewsItem);
+		_sandbox.bind('.bc-twitter-task', 'click', handleTwitterCommand);
 	};
 		
 	var drawNewsItem = function(parent, item) {
@@ -147,6 +175,72 @@
 		var itemDate = newsItemBox.appendChild(document.createElement('span'));
 		itemDate.className = 'bc-news-pub-date';
 		itemDate.innerText = item.pubDate;
+		
+		if ( item.source == 'twitter') {
+			//render reply button
+			var twitterOptions = newsItemBox.appendChild(document.createElement('div'));
+			twitterOptions.className = 'bc-twitter-options ';
+			
+			var btn = twitterOptions.appendChild(document.createElement('span'));
+			btn.textContent = "F";
+			btn.className = 'bc-twitter-task';
+			btn.setAttribute('data-action', 'favorite');
+			
+			btn = twitterOptions.appendChild(document.createElement('span'));
+			btn.textContent = " RT";
+			btn.className = 'bc-twitter-task';
+			btn.setAttribute('data-action', 'reteweet');
+			
+			btn = twitterOptions.appendChild(document.createElement('span'));
+			btn.textContent = " R";
+			btn.className = 'bc-twitter-task';
+			btn.setAttribute('data-action', 'reply');
+		}
+		
+	};
+	
+	var handleTwitterCommand = function(e) {
+		e.stopPropagation();
+		var task = this.getAttribute('data-action');
+		switch ( task ) {
+			case 'reply' : {
+				openReplyBox(this);
+			} break;
+			case 'retweet' : {} break;
+			case 'favorite' : {} break;
+		}
+		
+	};
+	
+	var openReplyBox = function(btn) {
+		var container = btn.parentNode.parentNode; //refactor into something more flexible
+		
+		var sendField = container.appendChild(document.createElement('div'));
+		sendField.className = 'bc-tweet-reply-cont';
+		
+		var tArea = sendField.appendChild(document.createElement('textarea'));
+		tArea.className = 'bc-retweet-field';
+		
+		var sendBtn = sendField.appendChild(document.createElement('button'));
+		sendBtn.className = 'send-tweet-reply';
+		sendBtn.textContent = 'Send';
+		
+		var cancelBtn = sendField.appendChild(document.createElement('button'));
+		cancelBtn.className = 'send-tweet-reply';
+		cancelBtn.textContent = 'Cancel';
+
+		_sandbox.slideDown(sendField);
+		_sandbox.focus(tArea);
+		
+		_sandbox.bind(cancelBtn, 'click', function(e) {
+			e.stopPropagation();
+			_sandbox.slideRemove(this.parentNode);
+		});
+		
+		_sandbox.bind(sendField, 'click', function(e) {
+			//console.log('user entered field...');
+			e.stopPropagation(); // don't allow clicks into the text field to open the containing item
+		});
 	};
 	
 	var openNewsItem = function() {
@@ -356,12 +450,7 @@
 		
 		container.appendChild(document.createElement('br'));
 		
-		var connectBtn = container.appendChild(document.createElement('span'));
-		connectBtn.className = 'span-button'
-		connectBtn.innerText = 'Connect with Twitter';
-		connectBtn.setAttribute('style', 'margin-left:0.5em;');
-		
-		_sandbox.bind(connectBtn, 'click', _sandbox.signIntoTwitter);
+		renderTwitterButton(container);
 		
 		container.appendChild(document.createElement('br'));
 		container.appendChild(document.createElement('br'));
@@ -384,4 +473,18 @@
 		_sandbox.setNotificationSetting(this.checked);
 		console.log(_sandbox.getNotificationSetting());
 	};
+	
+	var renderTwitterButton = function(container) {
+		var btnKey = _sandbox.connectedToTwitter() ? 'signedIn' : 'signedOut';
+		
+		var connectBtn = container.appendChild(document.createElement('span'));
+		connectBtn.className = 'span-button ' + bcTwitterButtons[btnKey].className;
+		connectBtn.innerText = bcTwitterButtons[btnKey].text;
+		connectBtn.setAttribute('style', 'margin-left:0.5em;');
+		
+		var btnHandler = _sandbox.connectedToTwitter() ? _sandbox.signOutFromTwitter : _sandbox.signIntoTwitter;
+		
+		_sandbox.bind(connectBtn, 'click', btnHandler);
+	};
+	
 })();

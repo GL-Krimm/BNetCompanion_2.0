@@ -17,3 +17,12 @@ bcProfilePageButtons = [
 		{title:'Messages',img:'message.png',targetPage:'privacy'}//,
 		//{title:'Disconnect from BNet',img:'power.png',targetPage:'tos'}
 	];
+	
+bcTwitterButtons = {
+	signedIn:{
+		text:'Disconnect from Twitter', className:'bc-twitter-disconnect'
+	},
+	signedOut:{
+		text:'Connect to Twitter', className:'bc-twitter-connect'
+	}
+};
