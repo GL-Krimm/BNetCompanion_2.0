@@ -282,7 +282,6 @@ h1 {
 	background-color: #585860;
 	opacity:0.75;
 	width:90%;
-	min-height:40px;
 	margin:10px;
 	border: 1px groove;
 	border-radius:5px;
@@ -303,7 +302,6 @@ li.bc-news-item {
 	opacity:0.75;
 	*/
 	background-color: rgba(58,58,58,0.8);
-	min-height:50px;
 	margin:5px;
 	border:1px groove;
 	border-radius:5px;
@@ -362,7 +360,6 @@ div.bc-twitter-options span:hover {
 div.bc-tweet-reply-cont {
 	display: inline-block;
 	width: 98%;
-	min-height: 75px;
 }
 
 textarea.bc-retweet-field {
@@ -378,6 +375,12 @@ textarea.bc-retweet-field {
 	background-color:#000000;
 	font-family: "Apex Sans Book", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
 	color:#ffffff;
+}
+
+span.bc-twitter-task {
+	height: 16px;
+	width: 16px;
+	background:url('images/retweet_16.png') 0 0;
 }
 
 button.send-tweet-reply {

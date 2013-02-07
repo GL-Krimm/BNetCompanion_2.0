@@ -54,8 +54,10 @@
 	};
 	
 	BNetCompanion.prototype.slideRemove = function(selector) {
-		$j(selector).slideUp('sloe', function() {
-			$j(selector).remove();
+		$j(selector).fadeOut().promise(function() {
+			$j(selector).slideDown('slow').promise(function() {
+				$j(selector).remove();
+			});
 		});
 	};
 		
@@ -64,7 +66,7 @@
 	};
 
 	BNetCompanion.prototype.slideUp = function(selector) {
-		$j(selector).slideUp('slow');
+		$j(selector).animate({height:0}, 'slow');
 	};
 	
 	BNetCompanion.prototype.getContentRoot = function() {
@@ -216,7 +218,7 @@
 		var container = btn.parentNode.parentNode; //refactor into something more flexible
 		
 		var sendField = container.appendChild(document.createElement('div'));
-		sendField.className = 'bc-tweet-reply-cont';
+		sendField.className = 'bc-tweet-reply-cont hidden';
 		
 		var tArea = sendField.appendChild(document.createElement('textarea'));
 		tArea.className = 'bc-retweet-field';
@@ -234,7 +236,7 @@
 		
 		_sandbox.bind(cancelBtn, 'click', function(e) {
 			e.stopPropagation();
-			_sandbox.slideRemove(this.parentNode);
+			_sandbox.slideRemove(sendField);
 		});
 		
 		_sandbox.bind(sendField, 'click', function(e) {
