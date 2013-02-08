@@ -345,7 +345,7 @@ div.bc-twitter-options {
 	display:inline;
 	position:relative;
 	vertical-align:bottom;
-	top:-0.3em;
+	top:-0.2em;
 	right:-0.7em;
 	color: rgba(58,58,58,1);
 	text-align:right;
@@ -378,15 +378,49 @@ textarea.bc-retweet-field {
 }
 
 span.bc-twitter-task {
-	height: 16px;
-	width: 16px;
-	background:url('images/retweet_16.png') 0 0;
+	display:inline-block;
+	min-height: 12px;
+	max-height: 12px;
+	min-width: 12px;
+	max-width: 12px;
+	border-radius:2px;
+}
+
+span.bc-twitter-reply {
+	background:url('images/reply.png') 0 0;
+}
+
+span.bc-twitter-reply:hover {
+	background:url('images/reply.png') 12px 0;
+}
+
+span.bc-twitter-retweet {
+	background:url('images/retweet.png') 0 0;
+}
+
+span.bc-twitter-retweet:hover {
+	background:url('images/retweet.png') 12px 0;
+}
+
+span.bc-twitter-favorite {
+	background:url('images/favorite.png') 0 0;
+}
+
+span.bc-twitter-favorite:hover {
+	background:url('images/favorite.png') 12px 0;
 }
 
 button.send-tweet-reply {
 	display: block;
 	position: relative;
 	float: right;
+	border-radius:2px;
+	/*
+	color:#414142;
+	background-color:#0096DB;
+	font-weight:bold;
+	border-color: rgba(0,150,219,0.5);
+	*/
 }
 
 p.bc-news-details {

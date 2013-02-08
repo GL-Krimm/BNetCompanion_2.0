@@ -54,8 +54,8 @@
 	};
 	
 	BNetCompanion.prototype.slideRemove = function(selector) {
-		$j(selector).fadeOut().promise(function() {
-			$j(selector).slideDown('slow').promise(function() {
+		$j(selector).fadeOut(function() {
+			$j(selector).slideUp('slowest', function() {
 				$j(selector).remove();
 			});
 		});
@@ -181,22 +181,25 @@
 		if ( item.source == 'twitter') {
 			//render reply button
 			var twitterOptions = newsItemBox.appendChild(document.createElement('div'));
-			twitterOptions.className = 'bc-twitter-options ';
+			twitterOptions.className = 'bc-twitter-options';
 			
 			var btn = twitterOptions.appendChild(document.createElement('span'));
-			btn.textContent = "F";
-			btn.className = 'bc-twitter-task';
+			//btn.textContent = "F";
+			btn.className = 'bc-twitter-task bc-twitter-favorite';
 			btn.setAttribute('data-action', 'favorite');
+			btn.title = 'Favorite';
 			
 			btn = twitterOptions.appendChild(document.createElement('span'));
-			btn.textContent = " RT";
-			btn.className = 'bc-twitter-task';
+			//btn.textContent = " RT";
+			btn.className = 'bc-twitter-task bc-twitter-retweet';
 			btn.setAttribute('data-action', 'reteweet');
+			btn.title = 'Retweet';
 			
 			btn = twitterOptions.appendChild(document.createElement('span'));
-			btn.textContent = " R";
-			btn.className = 'bc-twitter-task';
+			//btn.textContent = " R";
+			btn.className = 'bc-twitter-task bc-twitter-reply';
 			btn.setAttribute('data-action', 'reply');
+			btn.title = 'Reply';
 		}
 		
 	};
@@ -217,32 +220,34 @@
 	var openReplyBox = function(btn) {
 		var container = btn.parentNode.parentNode; //refactor into something more flexible
 		
-		var sendField = container.appendChild(document.createElement('div'));
-		sendField.className = 'bc-tweet-reply-cont hidden';
-		
-		var tArea = sendField.appendChild(document.createElement('textarea'));
-		tArea.className = 'bc-retweet-field';
-		
-		var sendBtn = sendField.appendChild(document.createElement('button'));
-		sendBtn.className = 'send-tweet-reply';
-		sendBtn.textContent = 'Send';
-		
-		var cancelBtn = sendField.appendChild(document.createElement('button'));
-		cancelBtn.className = 'send-tweet-reply';
-		cancelBtn.textContent = 'Cancel';
+		if ( container.getElementsByClassName('bc-tweet-reply-cont').length == 0 ) {
+			var sendField = container.appendChild(document.createElement('div'));
+			sendField.className = 'bc-tweet-reply-cont hidden';
+			
+			var tArea = sendField.appendChild(document.createElement('textarea'));
+			tArea.className = 'bc-retweet-field';
+			
+			var sendBtn = sendField.appendChild(document.createElement('button'));
+			sendBtn.className = 'send-tweet-reply';
+			sendBtn.textContent = 'Send';
+			
+			var cancelBtn = sendField.appendChild(document.createElement('button'));
+			cancelBtn.className = 'send-tweet-reply';
+			cancelBtn.textContent = 'Cancel';
 
-		_sandbox.slideDown(sendField);
-		_sandbox.focus(tArea);
-		
-		_sandbox.bind(cancelBtn, 'click', function(e) {
-			e.stopPropagation();
-			_sandbox.slideRemove(sendField);
-		});
-		
-		_sandbox.bind(sendField, 'click', function(e) {
-			//console.log('user entered field...');
-			e.stopPropagation(); // don't allow clicks into the text field to open the containing item
-		});
+			_sandbox.slideDown(sendField);
+			_sandbox.focus(tArea);
+			
+			_sandbox.bind(cancelBtn, 'click', function(e) {
+				e.stopPropagation();
+				_sandbox.slideRemove(sendField);
+			});
+			
+			_sandbox.bind(sendField, 'click', function(e) {
+				//console.log('user entered field...');
+				e.stopPropagation(); // don't allow clicks into the text field to open the containing item
+			});
+		}
 	};
 	
 	var openNewsItem = function() {
