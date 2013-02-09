@@ -1,8 +1,8 @@
 var bnetClient;
 
-function getSearchParams() {
+function getSearchParams(searchStr) {
 	var params = {};
-	window.location.search.replace('?','').split('&').forEach(function(item) {
+	searchStr.replace('?','').split('&').forEach(function(item) {
 		var p = item.split('=');
 		params[p[0]] = p[1];
 	});
@@ -20,11 +20,12 @@ jQuery(document).ready(function() {
 	if ( window.location.search ) {
 		console.log(window.location.search);
 		// check item and get it in the same call.
-		if ( params = getSearchParams() ) {
-			bnetClient.setTwitterAuthToken(params.oauth_token);
+		if ( params = bnetClient.getSearchParams(window.location.search) ) {
+					
+			bnetClient.signIntoTwitter(params.oauth_token, params.oauth_verifier);
 		
 			window.open('', '_self', ''); //gets a handle on the background page when opened by omniauth callback...
-			window.close(); //then closes it
+			//window.close(); //then closes it
 		}
 
 	}

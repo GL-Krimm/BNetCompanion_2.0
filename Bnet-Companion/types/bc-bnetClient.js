@@ -53,18 +53,12 @@
 	BcBnetClient.prototype.playNotificationSound = function() {	
 		playNewNewsSound();
 	};
-	
-	BcBnetClient.prototype.setTwitterAuthToken = function(token) {	
-		if ( token ) {
-			localStorage.twitterAuthToken = token;
-		}		
-	};
-
+		
 	BcBnetClient.prototype.clientConnectedToTwitter = function() {	
 		return localStorage.hasOwnProperty('twitterAuthToken');	
 	};
 	
-	BcBnetClient.prototype.signIntoTwitter = function() {	
+	BcBnetClient.prototype.requestTwitterToken = function() {	
 		var callbackString = window.top.location + "?t=" + Date.now();
 		var result = OAuthSimple().sign({
 			action:"GET",
@@ -107,8 +101,116 @@
 		});
 	};
 	
+	BcBnetClient.prototype.signIntoTwitter = function(token, secret) {
+		var auth_url = "https://api.twitter.com/oauth/access_token";
+		console.log("signing in...");
+		
+		var getParams = this.getSearchParams;
+		
+		var callback = function(data) {
+			console.log('signin callback called...');
+			var tokens = getParams(data);
+			
+			localStorage.twitterAuthToken = tokens.oauth_token || null;
+			localStorage.twitterAuthTokenSecret = tokens.oauth_token_secret || null;
+		};
+		try {
+			sendTwitterRequest(auth_url, null, 'POST', token, secret, callback);
+		} catch ( e ) {
+			console.log(e);
+		}
+		
+	};
+	
 	BcBnetClient.prototype.signOutFromTwitter = function() {
 		delete localStorage.twitterAuthToken;
+		delete localStorage.twitterAuthTokenSecret;
+	};
+
+	BcBnetClient.prototype.retweet = function(tweetKey) {
+	
+		var twitterUrl = "https://api.twitter.com/1/statuses/retweet/"+tweetKey+".json";
+		
+		try {
+			oauthRequest({url:twitterUrl, method:'POST', token:localStorage.twitterAuthToken,tokenSecret:localStorage.twitterAuthTokenSecret});
+		} catch ( e ) {
+			console.log(e);
+		}
+	};
+	
+	BcBnetClient.prototype.getSearchParams = function(searchStr) {
+		var params = {};
+		searchStr.replace('?','').split('&').forEach(function(item) {
+			var p = item.split('=');
+			params[p[0]] = p[1];
+		});
+		return params;
+	};
+	
+//method:"POST",url:"https://api.twitter.com/1/statuses/retweet/"+d+".json",account:a
+    var oauthRequest=function(d){
+		var accessor={
+			consumerSecret:TwitterConsumerSecret
+		};
+		
+		var message={
+			action:d.url,
+			method:d.method||"GET",
+			parameters:[["oauth_consumer_key",TwitterConsumerKey],
+			["oauth_signature_method","HMAC-SHA1"],
+			["oauth_version","1.0"]]
+		};	
+		
+		if(d.token){
+			message.parameters.push(["oauth_token",d.token])
+		}
+		
+		if(d.tokenSecret){
+			accessor.tokenSecret=d.tokenSecret
+		}
+		
+		for(var a in d.parameters) {
+			message.parameters.push(d.parameters[a])
+		}
+		
+		OAuth.setTimestampAndNonce(message);
+		OAuth.SignatureMethod.sign(message,accessor);
+		
+		$j.ajax({
+			url:message.action,
+			type:message.method,
+			data:OAuth.getParameterMap(message.parameters),
+			dataType:"json",
+			success:function(data) {
+				if (d.success) {d.success(data);}
+			}
+		});
+	};		
+		
+	var sendTwitterRequest = function(url, params, method, token, secret, callback) {
+		
+		var request = null;
+		
+		OAuthSimple().reset();
+		request = OAuthSimple(TwitterConsumerKey,TwitterConsumerSecret).sign({
+			action:method,
+			dataType:"JSON",
+			path:url,
+			parameters:{
+				oauth_token:token,
+				oauth_token_secret:secret
+			}
+		});
+		
+		console.log(request);
+		
+		$j.ajax({
+			url:request.signed_url,
+			type:method,
+			data:request.parameters,
+			success:callback
+		});		
+			
 	};
 	
 	var playNewNewsSound = function() {
@@ -124,9 +226,9 @@
 		} else {
 			try {
 				getTwitterFeed();
-				getBungieBlog();
-				getBungieLegacyBlog();
-				getYoutubeFeed();
+				//getBungieBlog();
+				//getBungieLegacyBlog();
+				//getYoutubeFeed();
 			} catch ( e ) {
 				console.log('An exception occurred when attempting to fetch the news feed:');
 				console.log(e);
@@ -216,10 +318,12 @@
 	var getTwitterFeed = function() {
 		
 		
-		if ( localStorage.twitterAuthToken ) {
+		if ( localStorage.twitterAuthToken ) {		
 			getSignedTwitterFeed();
 		} else {
-			var twitterUrl = "http://api.twitter.com/1/statuses/user_timeline.json?user_id=26280712&count=40&include_rts=1";
+			// for testing twitter funcs - 180827393
+			// bungie twitter uid - 26280712
+			var twitterUrl = "http://api.twitter.com/1/statuses/user_timeline.json?user_id=180827393&count=80&include_rts=1";
 			
 			var link;
 			var item;
@@ -243,50 +347,23 @@
 	};
 	
 	var getSignedTwitterFeed = function() {
-		var request = null;
-		var twitterUrl = "https://api.twitter.com/1/statuses/user_timeline.json";
+			
+		var params = {
+			user_id:180827393,
+			include_rts:1,
+			count:40
+		};
 		
-		if ( localStorage.twitterAuthToken ) {
-			request = OAuthSimple().sign({
-				action:"GET",
-				method:"HMAC-SHA1",
-				dataType:"JSON",
-				path:twitterUrl,
-				parameters:{
-					user_id:26280712,
-					include_rts:1,
-					count:40,
-					oauth_version:"1.0",
-					oauth_signature_method:"HMAC-SHA1"
-				},
-				signatures:{
-					consumer_key:TwitterConsumerKey,
-					shared_secret:TwitterConsumerSecret,
-					auth_token:localStorage.twitterAuthToken
-				}
-			});
-		} else {
-			request = {};
-			request.url = twitterUrl;
-			request.dataType = 'JSON';
+		sendTwitterRequest("https://api.twitter.com/1/statuses/user_timeline.json?user_id=180827393&count=80&include_rts=1", params, 'GET', localStorage.twitterAuthToken, localStorage.twitterAuthTokenSecret, processTwitterResponse);
+		
+	};
+	
+	var processTwitterResponse = function(data) {
+		for ( var i = 0; i < data.length; i++ ) {
+		//title, url, pubDate, source, itemId
+			link = "http://twitter.com/bungie/statuses/" + data[i].id_str;
+			_newsFeed.add({title:data[i].text, url:link, pubDate:data[i].created_at, source:'twitter', itemId:data[i].id_str});
 		}
-		
-		console.log(request.signed_url);
-		
-		$j.ajax({
-			url:request.signed_url || request.url,
-			dataType:request.dataType, //"JSON",
-			type:"GET",
-			async:false,
-			success:function(data) {
-				for ( var i = 0; i < data.length; i++ ) {
-				//title, url, pubDate, source, itemId
-					link = "http://twitter.com/bungie/statuses/" + data[i].id_str;
-					
-					_newsFeed.add({title:data[i].text, url:link, pubDate:data[i].created_at, source:'twitter', itemId:data[i].id_str});
-				}
-			}
-		});
 	};
 	
 	var getYoutubeFeed = function() {

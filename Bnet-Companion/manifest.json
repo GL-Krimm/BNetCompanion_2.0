@@ -4,7 +4,7 @@
 	"description":"Chrome port of the Bungie Mobile app.",
 	"version":"1.4.5",
 	"background": { 
-		"scripts":[ "lib/jquery.js", "lib/sha1.js", "lib/oauthsimple.js", "types/bc-newsList.js", "types/bc-bnetClient.js", "controllers/bc-background.js" ]
+		"scripts":[ "lib/jquery.js", "lib/sha1.js", "lib/oauth.js", "lib/oauthsimple.js", "types/bc-newsList.js", "types/bc-bnetClient.js", "controllers/bc-background.js" ]
 	},
     "icons": {
 	  "128": "bc-logo-128.png",

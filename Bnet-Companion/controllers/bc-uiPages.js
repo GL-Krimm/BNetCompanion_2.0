@@ -93,6 +93,10 @@
 		return _bnetClient.setPlayNotifications(value);
 	};
 
+	BNetCompanion.prototype.sendRetweet = function(tweetId) {
+		_bnetClient.retweet(tweetId);
+	};	
+	
 	// responsible for finding and rendering new news
 	// items in the event the window is still open when
 	// new news is received
@@ -104,8 +108,8 @@
 		setTimeout(arguments.callee,1000);
 	};
 	
-	BNetCompanion.prototype.signIntoTwitter = function() {
-		_bnetClient.signIntoTwitter();
+	BNetCompanion.prototype.requestTwitterToken = function() {
+		_bnetClient.requestTwitterToken();
 	};
 	
 	BNetCompanion.prototype.signOutFromTwitter = function() {
@@ -164,6 +168,7 @@
 		newsItemBox.className = 'bc-news-item';
 		newsItemBox.setAttribute('data-item-link', item.url);
 		
+		
 		// now add the image
 		var itemImg = newsItemBox.appendChild(document.createElement('img'));
 		itemImg.src = 'images/' + item.source + (item.source[0] == 'y' ? '.png' : '.gif');
@@ -179,6 +184,9 @@
 		itemDate.innerText = item.pubDate;
 		
 		if ( item.source == 'twitter') {
+			
+			newsItemBox.setAttribute('data-tweet-id', item.itemId);
+		
 			//render reply button
 			var twitterOptions = newsItemBox.appendChild(document.createElement('div'));
 			twitterOptions.className = 'bc-twitter-options';
@@ -192,7 +200,7 @@
 			btn = twitterOptions.appendChild(document.createElement('span'));
 			//btn.textContent = " RT";
 			btn.className = 'bc-twitter-task bc-twitter-retweet';
-			btn.setAttribute('data-action', 'reteweet');
+			btn.setAttribute('data-action', 'retweet');
 			btn.title = 'Retweet';
 			
 			btn = twitterOptions.appendChild(document.createElement('span'));
@@ -211,7 +219,9 @@
 			case 'reply' : {
 				openReplyBox(this);
 			} break;
-			case 'retweet' : {} break;
+			case 'retweet' : {
+				sendRetweet(this);
+			} break;
 			case 'favorite' : {} break;
 		}
 		
@@ -248,6 +258,11 @@
 				e.stopPropagation(); // don't allow clicks into the text field to open the containing item
 			});
 		}
+	};
+	
+	var sendRetweet = function(button) {
+		_sandbox.sendRetweet(button.parentNode.parentNode.getAttribute('data-tweet-id'));
+		console.log(button.parentNode.parentNode.getAttribute('data-tweet-id'));
 	};
 	
 	var openNewsItem = function() {
@@ -489,7 +504,7 @@
 		connectBtn.innerText = bcTwitterButtons[btnKey].text;
 		connectBtn.setAttribute('style', 'margin-left:0.5em;');
 		
-		var btnHandler = _sandbox.connectedToTwitter() ? _sandbox.signOutFromTwitter : _sandbox.signIntoTwitter;
+		var btnHandler = _sandbox.connectedToTwitter() ? _sandbox.signOutFromTwitter : _sandbox.requestTwitterToken;
 		
 		_sandbox.bind(connectBtn, 'click', btnHandler);
 	};
