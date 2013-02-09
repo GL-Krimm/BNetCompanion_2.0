@@ -250,9 +250,9 @@
 		} else {
 			try {
 				getTwitterFeed();
-				//getBungieBlog();
-				//getBungieLegacyBlog();
-				//getYoutubeFeed();
+				getBungieBlog();
+				getBungieLegacyBlog();
+				getYoutubeFeed();
 			} catch ( e ) {
 				console.log('An exception occurred when attempting to fetch the news feed:');
 				console.log(e);
@@ -347,7 +347,7 @@
 		} else {
 			// for testing twitter funcs - 180827393
 			// bungie twitter uid - 26280712
-			var twitterUrl = "http://api.twitter.com/1/statuses/user_timeline.json?user_id=180827393&count=80&include_rts=1";
+			var twitterUrl = "http://api.twitter.com/1/statuses/user_timeline.json?user_id=26280712&count=80&include_rts=1";
 			
 			var link;
 			var item;
@@ -378,7 +378,7 @@
 			count:40
 		};
 		
-		sendTwitterRequest("https://api.twitter.com/1/statuses/user_timeline.json?user_id=180827393&count=80&include_rts=1", params, 'GET', localStorage.twitterAuthToken, localStorage.twitterAuthTokenSecret, processTwitterResponse);
+		sendTwitterRequest("https://api.twitter.com/1/statuses/user_timeline.json?user_id=26280712&count=80&include_rts=1", params, 'GET', localStorage.twitterAuthToken, localStorage.twitterAuthTokenSecret, processTwitterResponse);
 		
 	};
 	
