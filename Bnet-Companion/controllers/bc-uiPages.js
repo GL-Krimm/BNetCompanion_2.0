@@ -97,6 +97,14 @@
 		_bnetClient.retweet(tweetId);
 	};	
 	
+	BNetCompanion.prototype.favoriteTweet = function(tweetId) {
+		_bnetClient.favoriteTweet(tweetId);
+	};	
+	
+	BNetCompanion.prototype.sendReply = function(tweetId, msg) {
+		_bnetClient.reply(tweetId, msg);
+	};	
+	
 	// responsible for finding and rendering new news
 	// items in the event the window is still open when
 	// new news is received
@@ -222,7 +230,9 @@
 			case 'retweet' : {
 				sendRetweet(this);
 			} break;
-			case 'favorite' : {} break;
+			case 'favorite' : {
+				favoriteTweet(this);
+			} break;
 		}
 		
 	};
@@ -248,6 +258,13 @@
 			_sandbox.slideDown(sendField);
 			_sandbox.focus(tArea);
 			
+			_sandbox.bind(sendBtn, 'click', function(e) {
+				e.stopPropagation();
+								
+				_sandbox.sendReply(container.getAttribute('data-tweet-id'), tArea.value);
+				_sandbox.slideRemove(sendField);
+			});
+			
 			_sandbox.bind(cancelBtn, 'click', function(e) {
 				e.stopPropagation();
 				_sandbox.slideRemove(sendField);
@@ -262,7 +279,10 @@
 	
 	var sendRetweet = function(button) {
 		_sandbox.sendRetweet(button.parentNode.parentNode.getAttribute('data-tweet-id'));
-		console.log(button.parentNode.parentNode.getAttribute('data-tweet-id'));
+	};
+	
+	var favoriteTweet = function(button) {
+		_sandbox.favoriteTweet(button.parentNode.parentNode.getAttribute('data-tweet-id'));
 	};
 	
 	var openNewsItem = function() {

@@ -126,10 +126,32 @@
 		delete localStorage.twitterAuthToken;
 		delete localStorage.twitterAuthTokenSecret;
 	};
+	
+	BcBnetClient.prototype.reply = function(tweetKey, msg) {
+		var url = "https://api.twitter.com/1/statuses/update.json";
+		
+		console.log("replying: " + tweetKey + " " + msg);
+		
+		var params = [['status', msg],['in_reply_to_status_id',tweetKey]];
+		
+		oauthRequest({url:url, parameters:params, method:'POST', token:localStorage.twitterAuthToken,tokenSecret:localStorage.twitterAuthTokenSecret});
+	};
 
 	BcBnetClient.prototype.retweet = function(tweetKey) {
 	
 		var twitterUrl = "https://api.twitter.com/1/statuses/retweet/"+tweetKey+".json";
+		
+		try {
+			oauthRequest({url:twitterUrl, method:'POST', token:localStorage.twitterAuthToken,tokenSecret:localStorage.twitterAuthTokenSecret});
+		} catch ( e ) {
+			console.log(e);
+		}
+	};
+	
+	//https://api.twitter.com/1/favorites/create/:id.format
+	BcBnetClient.prototype.favoriteTweet = function(tweetKey) {
+	
+		var twitterUrl = "https://api.twitter.com/1/favorites/create/" +tweetKey+ ".json";
 		
 		try {
 			oauthRequest({url:twitterUrl, method:'POST', token:localStorage.twitterAuthToken,tokenSecret:localStorage.twitterAuthTokenSecret});
@@ -175,6 +197,8 @@
 		
 		OAuth.setTimestampAndNonce(message);
 		OAuth.SignatureMethod.sign(message,accessor);
+		
+		console.log(OAuth.getParameterMap(message.parameters));
 		
 		$j.ajax({
 			url:message.action,
