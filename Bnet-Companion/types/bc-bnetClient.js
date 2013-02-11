@@ -60,7 +60,7 @@
 	
 	BcBnetClient.prototype.requestTwitterToken = function() {	
 		var callbackString = window.top.location + "?t=" + Date.now();
-		var result = OAuthSimple().sign({
+		/*var result = OAuthSimple().sign({
 			action:"GET",
 			method:"HMAC-SHA1",
 			type:"text",
@@ -74,8 +74,31 @@
 				consumer_key:TwitterConsumerKey,
 				shared_secret:TwitterConsumerSecret
 			}
+		});*/
+		
+		var params = [
+			['oauth_version',"1.0"],
+				['oauth_signature_method', "HMAC-SHA1"],
+				['oauth_callback', callbackString]
+		];
+		
+		var getParams = getSearchParams;
+		
+		oauthRequest({
+			url:"https://api.twitter.com/oauth/request_token",
+			parameters:params, 
+			success:function(data) {
+				var returnedParams = getSearchParams(data);
+				if ( returnedParams.oauth_token ) {
+					chrome.tabs.create({
+						url:"https://api.twitter.com/oauth/authorize?oauth_token=" + returnedParams.oauth_token
+					});
+				}
+			}
 		});
 		
+		
+		/*
 		$j.ajax({
 			url:result.signed_url,
 			success:function(data) {
@@ -98,7 +121,7 @@
 				}
 				
 			}
-		});
+		});*/
 	};
 	
 	BcBnetClient.prototype.signIntoTwitter = function(token, secret) {
@@ -372,13 +395,19 @@
 	
 	var getSignedTwitterFeed = function() {
 			
-		var params = {
-			user_id:180827393,
-			include_rts:1,
-			count:40
-		};
+		var params = [
+			['user_id', '26280712'],
+			['include_rts', '1'],
+			['count', '40']
+		];
 		
-		sendTwitterRequest("https://api.twitter.com/1/statuses/user_timeline.json?user_id=26280712&count=80&include_rts=1", params, 'GET', localStorage.twitterAuthToken, localStorage.twitterAuthTokenSecret, processTwitterResponse);
+		oauthRequest({
+			url:"https://api.twitter.com/1/statuses/user_timeline.json",
+			parameters:params,
+			token:localStorage.twitterAuthToken,
+			tokenSecret:localStorage.twitterAuthTokenSecret,
+			success:processTwitterResponse
+		});
 		
 	};
 	
