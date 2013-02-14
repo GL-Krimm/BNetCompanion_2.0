@@ -86,18 +86,20 @@
 		
 	};
 	
-	BcBnetClient.prototype.signIntoTwitter = function(token, secret) {
+	BcBnetClient.prototype.signIntoTwitter = function(token, secret, callback) {
 		var auth_url = "https://api.twitter.com/oauth/access_token";
 		
-		var callback = function(data) {
-			
+		var authCallback = function(data) {
+			console.log('in callback');
 			var tokens = getCallbackParams(data);
 			
 			localStorage.twitterAuthToken = tokens.oauth_token || null;
 			localStorage.twitterAuthTokenSecret = tokens.oauth_token_secret || null;
+			
+			callback();
 		};
 		try {
-			oauthRequest({url:auth_url, method:'POST', format:'TEXT', token:token, tokenSecret:secret, success:callback});
+			oauthRequest({url:auth_url, method:'POST', async:true, format:'TEXT', token:token, tokenSecret:secret, success:authCallback});
 		} catch ( e ) {
 			console.log(e);
 		}
@@ -187,6 +189,7 @@
 		try {
 			$j.ajax({
 				url:message.action,
+				async:d.async||true,
 				type:message.method||'GET',
 				data:OAuth.getParameterMap(message.parameters),
 				dataType:d.format||'JSON',
