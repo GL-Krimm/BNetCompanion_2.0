@@ -17,8 +17,8 @@
 		closeBtn.textContent = 'X';
 		closeBtn.className = ' bc-close-notification-btn ';
 		
-		var virgil = notification.appendChild(document.createElement('img'));
-		virgil.src = 'images/bnet.gif';
+		var virgil = notification.appendChild(document.createElement('span'));
+		virgil.className = 'bc-vergil';
 		
 		var msg = notification.appendChild(document.createElement('p'));
 		msg.textContent = 'New items detected...';
@@ -37,6 +37,24 @@
 			});
 		}, 4000);
 		
+		setTimeout(playVergil, 1000);
+		
+	};
+	
+	var playVergil = function(pos) {
+		var position = pos || 0;
+		if ( position < bcVergilAnimap.length ) {
+			var vergil = document.getElementsByClassName('bc-vergil')[0];
+			
+			if ( vergil ) {
+				vergil.style.backgroundPosition = ( - (bcVergilAnimap[position].x) * 55 ) + "px 0px";
+			}
+			
+			console.log('here is what is animating: ' + ( - (bcVergilAnimap[position].x) * 55));
+			setTimeout(function() {
+				playVergil(++position);
+			}, bcVergilAnimap[position].ms);
+		}
 	};
 	
 })();

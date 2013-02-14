@@ -90,7 +90,6 @@
 		var auth_url = "https://api.twitter.com/oauth/access_token";
 		
 		var authCallback = function(data) {
-			console.log('in callback');
 			var tokens = getCallbackParams(data);
 			
 			localStorage.twitterAuthToken = tokens.oauth_token || null;

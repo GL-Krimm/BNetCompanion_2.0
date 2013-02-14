@@ -339,7 +339,7 @@ ul.bc-news-list {
 	opacity:0.75;
 	*/
 	position:fixed;
-	min-height:50px;
+	min-height:65px;
 	background-color: rgba(0,150,219,0.8);
 	margin:5px;
 	border:1px groove;
@@ -379,13 +379,24 @@ ul.bc-news-list {
 	float:left;
 }
 
+.bc-notification span.bc-vergil {
+	margin-left:3px;
+	height:55px;
+	width:55px;
+	opacity:1.0;
+	vertical-align:middle;
+	margin-top:5px;
+	float:left;
+	background: url('images/vergil_spritesheet.png') -110px 0px no-repeat;
+}
+
 .bc-notification p {
 	overflow:hidden;
 	height:32px;
 	width:150px;
 	color:#ffffff;
 	margin-left:40px;
-	margin-top:1.2em;
+	margin-top:2em;
 	font-size:0.8em;
 }
 
