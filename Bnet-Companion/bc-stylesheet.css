@@ -296,11 +296,12 @@ ul.bc-news-list {
 	max-height:350px;
 }
 
-li.bc-news-item {
+.bc-news-item {
 	/*
 	background-color: #585860;
 	opacity:0.75;
 	*/
+	
 	background-color: rgba(58,58,58,0.8);
 	margin:5px;
 	border:1px groove;
@@ -310,15 +311,15 @@ li.bc-news-item {
 	cursor:default;
 }
 
-li.bc-news-item:hover {
+.bc-news-item:hover {
 	background-color:#707070;
 }
 
-li.bc-news-item span {
+.bc-news-item span {
 	cursor:default;
 }
 
-li.bc-news-item img {
+.bc-news-item img {
 	margin-left:3px;
 	height:30px;
 	width:30px;
@@ -326,6 +327,66 @@ li.bc-news-item img {
 	vertical-align:middle;
 	margin-top:10px;
 	float:left;
+}
+
+
+/*
+	Notifications - nearly a strait clone of the bc-news-item class but with a few subtle differences
+*/
+.bc-notification {
+	/*
+	background-color: #585860;
+	opacity:0.75;
+	*/
+	position:fixed;
+	min-height:50px;
+	background-color: rgba(0,150,219,0.8);
+	margin:5px;
+	border:1px groove;
+	border-radius:2px;
+	vertical-align:middle;
+	border-color:#aeaeae;
+	cursor:default;
+}
+
+.bc-notification span.bc-close-notification-btn {
+	color:#000000;
+	position:absolute;
+	right:0;
+	top:0;
+	text-align:right;
+}
+
+.bc-notification span.bc-close-notification-btn:hover {
+	background-color: rgba(0,150,219,0.8);
+}
+
+.bc-notification:hover {
+	background-color: rgba(112,112,112,0.8);
+}
+
+.bc-notification span {
+	cursor:default;
+}
+
+.bc-notification img {
+	margin-left:3px;
+	height:30px;
+	width:30px;
+	opacity:1.0;
+	vertical-align:middle;
+	margin-top:10px;
+	float:left;
+}
+
+.bc-notification p {
+	overflow:hidden;
+	height:32px;
+	width:150px;
+	color:#ffffff;
+	margin-left:40px;
+	margin-top:1.2em;
+	font-size:0.8em;
 }
 
 span.news-item-right {
