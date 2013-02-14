@@ -44,6 +44,10 @@
 	BNetCompanion.prototype.on = function(parent, selector, event, handler) {
 		$j(parent).on(event, selector, handler);
 	};
+
+	BNetCompanion.prototype.focus = function(selector) {
+		$j(selector).focus();
+	};
 	
 	BNetCompanion.prototype.removeClass = function(selector, className) {
 		$j(selector).removeClass(className);
@@ -175,6 +179,7 @@
 		var newsItemBox = parent.appendChild(document.createElement('li'));
 		newsItemBox.className = 'bc-news-item';
 		newsItemBox.setAttribute('data-item-link', item.url);
+		newsItemBox.setAttribute('data-full-tweet', item.title);
 		
 		
 		// now add the image
@@ -246,6 +251,12 @@
 			
 			var tArea = sendField.appendChild(document.createElement('textarea'));
 			tArea.className = 'bc-retweet-field';
+			_sandbox.focus(tArea);
+			tArea.value = container.getAttribute('data-full-tweet').match(/@[a-z0-9]+[\s]/gi).join('');
+			
+			if ( tArea.value.toLowerCase().indexOf('@bungie') < 0 ) {
+				tArea.value = '@Bungie ' + tArea.value;
+			}
 			
 			var sendBtn = sendField.appendChild(document.createElement('button'));
 			sendBtn.className = 'send-tweet-reply';

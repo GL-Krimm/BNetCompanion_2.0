@@ -93,8 +93,6 @@
 			
 			var tokens = getCallbackParams(data);
 			
-			console.log(tokens);
-			
 			localStorage.twitterAuthToken = tokens.oauth_token || null;
 			localStorage.twitterAuthTokenSecret = tokens.oauth_token_secret || null;
 		};
