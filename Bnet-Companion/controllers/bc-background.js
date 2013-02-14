@@ -18,14 +18,13 @@ jQuery(document).ready(function() {
 	
 	var params = null;
 	if ( window.location.search ) {
-		console.log(window.location.search);
 		// check item and get it in the same call.
 		if ( params = bnetClient.getSearchParams(window.location.search) ) {
-					
+			console.log('hi');
 			bnetClient.signIntoTwitter(params.oauth_token, params.oauth_verifier);
 		
 			window.open('', '_self', ''); //gets a handle on the background page when opened by omniauth callback...
-			window.close(); //then closes it
+			//window.close(); //then closes it
 		}
 
 	}

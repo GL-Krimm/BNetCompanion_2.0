@@ -60,85 +60,46 @@
 	
 	BcBnetClient.prototype.requestTwitterToken = function() {	
 		var callbackString = window.top.location + "?t=" + Date.now();
-		/*var result = OAuthSimple().sign({
-			action:"GET",
-			method:"HMAC-SHA1",
-			type:"text",
-			path:"https://api.twitter.com/oauth/request_token",
-			parameters:{
-				oauth_version:"1.0",
-				oauth_signature_method:"HMAC-SHA1",
-				oauth_callback:window.top.location
-			},
-			signatures:{
-				consumer_key:TwitterConsumerKey,
-				shared_secret:TwitterConsumerSecret
-			}
-		});*/
 		
 		var params = [
-			['oauth_version',"1.0"],
-				['oauth_signature_method', "HMAC-SHA1"],
-				['oauth_callback', callbackString]
+			['oauth_callback', callbackString]
 		];
-		
-		var getParams = getSearchParams;
-		
+				
 		oauthRequest({
 			url:"https://api.twitter.com/oauth/request_token",
+			method:'POST',
 			parameters:params, 
+			format:'TEXT',
 			success:function(data) {
-				var returnedParams = getSearchParams(data);
+			
+				var returnedParams = getCallbackParams(data);
 				if ( returnedParams.oauth_token ) {
 					chrome.tabs.create({
 						url:"https://api.twitter.com/oauth/authorize?oauth_token=" + returnedParams.oauth_token
 					});
 				}
+			},error:function(e) {
+				console.lot('error');
+				console.log(e);
 			}
 		});
 		
-		
-		/*
-		$j.ajax({
-			url:result.signed_url,
-			success:function(data) {
-			
-				var requestToken = null;
-				
-				data=data.split("&");
-				for (var i in data) {
-					var node = data[i].split("=");
-					
-					if ( node[0] == "oauth_token" ) {
-						requestToken = node[1];
-					}
-					
-				}
-				if ( requestToken ) {
-					chrome.tabs.create({
-						url:"https://api.twitter.com/oauth/authorize?oauth_token=" + requestToken
-					});
-				}
-				
-			}
-		});*/
 	};
 	
 	BcBnetClient.prototype.signIntoTwitter = function(token, secret) {
 		var auth_url = "https://api.twitter.com/oauth/access_token";
-		console.log("signing in...");
-		
-		var getParams = this.getSearchParams;
 		
 		var callback = function(data) {
-			console.log('signin callback called...');
-			var tokens = getParams(data);
+			
+			var tokens = getCallbackParams(data);
+			
+			console.log(tokens);
 			
 			localStorage.twitterAuthToken = tokens.oauth_token || null;
 			localStorage.twitterAuthTokenSecret = tokens.oauth_token_secret || null;
 		};
 		try {
-			sendTwitterRequest(auth_url, null, 'POST', token, secret, callback);
+			oauthRequest({url:auth_url, method:'POST', format:'TEXT', token:token, tokenSecret:secret, success:callback});
 		} catch ( e ) {
 			console.log(e);
 		}
@@ -153,11 +114,9 @@
 	BcBnetClient.prototype.reply = function(tweetKey, msg) {
 		var url = "https://api.twitter.com/1/statuses/update.json";
 		
-		console.log("replying: " + tweetKey + " " + msg);
-		
 		var params = [['status', msg],['in_reply_to_status_id',tweetKey]];
 		
-		oauthRequest({url:url, parameters:params, method:'POST', token:localStorage.twitterAuthToken,tokenSecret:localStorage.twitterAuthTokenSecret});
+		oauthRequest({url:url, parameters:params, method:'POST', token:localStorage.twitterAuthToken, tokenSecret:localStorage.twitterAuthTokenSecret});
 	};
 
 	BcBnetClient.prototype.retweet = function(tweetKey) {
@@ -165,9 +124,8 @@
 		var twitterUrl = "https://api.twitter.com/1/statuses/retweet/"+tweetKey+".json";
 		
 		try {
-			oauthRequest({url:twitterUrl, method:'POST', token:localStorage.twitterAuthToken,tokenSecret:localStorage.twitterAuthTokenSecret});
+			oauthRequest({url:twitterUrl, method:'POST', token:localStorage.twitterAuthToken, tokenSecret:localStorage.twitterAuthTokenSecret});
 		} catch ( e ) {
-			console.log(e);
 		}
 	};
 	
@@ -177,23 +135,28 @@
 		var twitterUrl = "https://api.twitter.com/1/favorites/create/" +tweetKey+ ".json";
 		
 		try {
-			oauthRequest({url:twitterUrl, method:'POST', token:localStorage.twitterAuthToken,tokenSecret:localStorage.twitterAuthTokenSecret});
+			oauthRequest({url:twitterUrl, method:'POST', token:localStorage.twitterAuthToken, tokenSecret:localStorage.twitterAuthTokenSecret});
 		} catch ( e ) {
-			console.log(e);
 		}
 	};
 	
 	BcBnetClient.prototype.getSearchParams = function(searchStr) {
+		return getCallbackParams(searchStr);
+	};
+	
+	var getCallbackParams = function(searchStr) {
 		var params = {};
 		searchStr.replace('?','').split('&').forEach(function(item) {
 			var p = item.split('=');
 			params[p[0]] = p[1];
 		});
 		return params;
+	
 	};
 	
 //method:"POST",url:"https://api.twitter.com/1/statuses/retweet/"+d+".json",account:a
     var oauthRequest=function(d){
+	
 		var accessor={
 			consumerSecret:TwitterConsumerSecret
 		};
@@ -201,9 +164,11 @@
 		var message={
 			action:d.url,
 			method:d.method||"GET",
-			parameters:[["oauth_consumer_key",TwitterConsumerKey],
-			["oauth_signature_method","HMAC-SHA1"],
-			["oauth_version","1.0"]]
+			parameters:[
+				["oauth_consumer_key",TwitterConsumerKey],
+				["oauth_signature_method","HMAC-SHA1"],
+				["oauth_version","1.0"]
+			]
 		};	
 		
 		if(d.token){
@@ -221,45 +186,21 @@
 		OAuth.setTimestampAndNonce(message);
 		OAuth.SignatureMethod.sign(message,accessor);
 		
-		console.log(OAuth.getParameterMap(message.parameters));
-		
-		$j.ajax({
-			url:message.action,
-			type:message.method,
-			data:OAuth.getParameterMap(message.parameters),
-			dataType:"json",
-			success:function(data) {
-				if (d.success) {d.success(data);}
-			}
-		});
-	};		
-		
-	var sendTwitterRequest = function(url, params, method, token, secret, callback) {
-		
-		var request = null;
-		
-		OAuthSimple().reset();
-		request = OAuthSimple(TwitterConsumerKey,TwitterConsumerSecret).sign({
-			action:method,
-			dataType:"JSON",
-			path:url,
-			parameters:{
-				oauth_token:token,
-				oauth_token_secret:secret
-			}
-		});
-		
-		console.log(request);
-		
-		$j.ajax({
-			url:request.signed_url,
-			type:method,
-			data:request.parameters,
-			success:callback
-		});		
-			
+		try {
+			$j.ajax({
+				url:message.action,
+				type:message.method||'GET',
+				data:OAuth.getParameterMap(message.parameters),
+				dataType:d.format||'JSON',
+				success:function(data) {
+					if (d.success) {d.success(data);}
+				}
+			});
+		} catch ( e ) {
+		}
+
 	};
-	
+
 	var playNewNewsSound = function() {
 		if ( localStorage.playNotificationsSound == 'true') {
 			_soundNode.play();
@@ -306,7 +247,6 @@
 				localStorage.latestPubDate = latestEntry;
 			}
 		} catch ( e ) {
-			console.log(e);
 		}
 		
 		// update every 30 seconds after a complete update
