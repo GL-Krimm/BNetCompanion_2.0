@@ -24,7 +24,7 @@
 	
 		// set or initialize the play notification setting
 		localStorage.playNotificationsSound = localStorage.playNotificationsSound ? localStorage.playNotificationsSound : true;
-		localStorage.showNotifications	= localStorage.showNotifications ? localStorage.showNotifications : true;
+		localStorage.showNotifications	= localStorage.showNotifications ? localStorage.showNotifications : false;
 		
 		_soundNode = document.createElement('audio');
 		_soundNode.id = 'bc-notification';
