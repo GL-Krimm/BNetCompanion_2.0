@@ -154,11 +154,6 @@
 	
 	};
 	
-	BcBnetClient.prototype.testNotify = function() {
-		notifyUser();
-	};
-	
-//method:"POST",url:"https://api.twitter.com/1/statuses/retweet/"+d+".json",account:a
     var oauthRequest=function(d){
 	
 		var accessor={

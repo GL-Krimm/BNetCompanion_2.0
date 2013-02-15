@@ -14,10 +14,6 @@
 		notification.id = 'bc-notification';
 		notification.style.top = document.body.scrollTop.toString();
 		
-		var closeBtn = notification.appendChild(document.createElement('span'));
-		closeBtn.textContent = 'X';
-		closeBtn.className = 'bc-close-notification-btn';
-		
 		var virgil = notification.appendChild(document.createElement('span'));
 		virgil.className = 'bc-vergil';
 		
@@ -26,7 +22,7 @@
 		
 		document.body.insertBefore(notification, document.body.firstChild);
 		
-		$j(closeBtn).click(function(e) {
+		$j(notification).click(function(e) {
 			$j(notification).fadeOut('slow').promise(function() {
 				$j(notification).remove();
 			});
