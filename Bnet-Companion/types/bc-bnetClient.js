@@ -21,6 +21,9 @@
 		} else {
 			_newsFeed = new BCNewsList();
 		}
+		
+		chrome.browserAction.setBadgeBackgroundColor({color:[0, 150, 219, 255]});
+		this.setBadgeText('Dev');
 	
 		// set or initialize the play notification setting
 		localStorage.playNotificationsSound = localStorage.playNotificationsSound ? localStorage.playNotificationsSound : true;
@@ -33,6 +36,10 @@
 		document.body.appendChild(_soundNode);
 		
 		updateNews();
+	};
+	
+	BcBnetClient.prototype.setBadgeText = function(text) {	
+		setBadge(text);
 	};
 	
 	BcBnetClient.prototype.getNews = function() {	
@@ -248,6 +255,7 @@
 				
 				if ( fetched > stored ) {
 					// new item detected. Notify user.
+					setBadge('New');
 					localStorage.latestPubDate = latestEntry;
 					localStorage.newItemsFetched = true;
 					playNewNewsSound();
@@ -263,6 +271,10 @@
 		// update every 30 seconds after a complete update
 		setTimeout(arguments.callee, 30 * 1000); 		
 	}
+	
+	var setBadge = function(text) {
+		chrome.browserAction.setBadgeText({text:text});	
+	};
 	
 	var getBungieBlog = function() {
 	

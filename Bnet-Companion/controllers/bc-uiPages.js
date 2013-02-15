@@ -13,7 +13,9 @@
 	
 		_contentRoot = document.getElementById('bc-content');
 	
-		_bnetClient = chrome.extension.getBackgroundPage().bnetClient;		
+		_bnetClient = chrome.extension.getBackgroundPage().bnetClient;	
+		_bnetClient.setBadgeText('');		
+		
 		_contentBody = document.getElementById('bc-content');
 		
 		_navMenuWidget = new BCNavMenuWidget(this);
