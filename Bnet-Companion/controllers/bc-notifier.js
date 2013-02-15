@@ -11,11 +11,12 @@
 	
 	BcNotifierWidget.prototype.notify = function() {
 		var notification = document.createElement('div');
-		notification.className = 'bc-notification';
+		notification.id = 'bc-notification';
+		notification.style.top = document.body.scrollTop.toString();
 		
 		var closeBtn = notification.appendChild(document.createElement('span'));
 		closeBtn.textContent = 'X';
-		closeBtn.className = ' bc-close-notification-btn ';
+		closeBtn.className = 'bc-close-notification-btn';
 		
 		var virgil = notification.appendChild(document.createElement('span'));
 		virgil.className = 'bc-vergil';
@@ -32,11 +33,15 @@
 		});
 		
 		setTimeout(function() {
-			$j(notification).fadeOut('slow').promise(function() {
+			try{
+				$j(notification).fadeOut('slow').promise(function() {
 				$j(notification).remove();
 			});
+			} catch ( e ) {
+				document.body.remove(notification);
+			}
+			
 		}, 4000);
-		
 		setTimeout(playVergil, 1000);
 		
 	};
@@ -58,5 +63,16 @@
 	};
 	
 })();
+	
+(function() {
+	notifier = new BcNotifierWidget();
+	chrome.extension.onMessage.addListener(function(request, sender, sendResponse) 
+	{ 	
+		if (request.req == "notify") { 
+			notifier.notify();
+		} 
+	});
+})();
 
-notifier = new BcNotifierWidget();
+
+ 

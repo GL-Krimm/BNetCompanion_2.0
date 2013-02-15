@@ -89,12 +89,12 @@
 		return _bnetClient.clientConnectedToTwitter();
 	};	
 	
-	BNetCompanion.prototype.getNotificationSetting = function() {
-		return _bnetClient.getPlayNotifications();
+	BNetCompanion.prototype.getNotificationSetting = function(settingName) {
+		return _bnetClient.getNotificationSetting(settingName);
 	};	
 
-	BNetCompanion.prototype.setNotificationSetting = function(value) {
-		return _bnetClient.setPlayNotifications(value);
+	BNetCompanion.prototype.setNotificationSetting = function(settingName, value) {
+		return _bnetClient.setNotificationSetting(settingName, value);
 	};
 
 	BNetCompanion.prototype.sendRetweet = function(tweetId) {
@@ -516,15 +516,30 @@
 		var chckBox = container.appendChild(document.createElement('input'));
 		chckBox.setAttribute('type', 'checkbox');
 		chckBox.setAttribute('style', 'margin-left:0.5em;');
-		chckBox.checked = _sandbox.getNotificationSetting() == 'true';	
+		chckBox.setAttribute('data-setting-name', 'playNotificationsSound');
+		chckBox.checked = _sandbox.getNotificationSetting('playNotificationsSound') == 'true';	
 		
 		_sandbox.bind(chckBox, 'change', changeNotificationSettings);
+		
+		container.appendChild(document.createElement('br'));
+		
+		//Show notification popups? 
+		var popupSpan = container.appendChild(document.createElement('span'));
+		popupSpan.innerText = 'Show notification popups?';
+		popupSpan.setAttribute('style', 'margin-left:0.5em;');
+		
+		var notifCheckBx = container.appendChild(document.createElement('input'));
+		notifCheckBx.setAttribute('type', 'checkbox');
+		notifCheckBx.setAttribute('style', 'margin-left:0.5em;');
+		notifCheckBx.setAttribute('data-setting-name', 'showNotifications');
+		notifCheckBx.checked = _sandbox.getNotificationSetting('showNotifications') == 'true';	
+		
+		_sandbox.bind(notifCheckBx, 'change', changeNotificationSettings);
 				
 	};
 	
 	var changeNotificationSettings = function() {
-		_sandbox.setNotificationSetting(this.checked);
-		console.log(_sandbox.getNotificationSetting());
+		_sandbox.setNotificationSetting(this.getAttribute('data-setting-name'), this.checked);
 	};
 	
 	var renderTwitterButton = function(container) {

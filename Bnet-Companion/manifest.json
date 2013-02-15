@@ -12,9 +12,17 @@
 	  "32": "bc-logo-32.png",
 	  "48": "bc-logo-48.png"
     },
+	"content_scripts": [{
+		"matches": ["http://*/*", "https://*/*"],
+		"css": ["bc-stylesheet.css"],
+		"js": ["lib/jquery.js", "resources/bc-vergil-animap.js", "controllers/bc-notifier.js"]
+	}],
+	"web_accessible_resources": [
+		"images/vergil_spritesheet.png"
+	],
 	"browser_action" :{
 		"default_popup":"bc-interface.html",
 		"default_icon":"bc-logo.png"
 	},
-	"permissions":["tabs", "http://*/*", "https://*/*"]
+	"permissions":["tabs", "http://www.bungie.net/*", "http://halo.bungie.net/*", "http://api.twitter.com/*", "https://api.twitter.com/*"]
 }

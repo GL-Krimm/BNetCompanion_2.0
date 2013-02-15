@@ -329,57 +329,50 @@ ul.bc-news-list {
 	float:left;
 }
 
-
 /*
 	Notifications - nearly a strait clone of the bc-news-item class but with a few subtle differences
 */
-.bc-notification {
+
+#bc-notification {
 	/*
 	background-color: #585860;
 	opacity:0.75;
 	*/
+	z-index:99;
 	position:fixed;
 	min-height:65px;
 	background-color: rgba(0,150,219,0.8);
 	margin:5px;
+	min-width:240px;
+	max-width:240px;
+	max-height:65px;
 	border:1px groove;
 	border-radius:2px;
 	vertical-align:middle;
 	border-color:#aeaeae;
 	cursor:default;
+	font-size:14px;
+	font-weight:normal;
 }
 
-.bc-notification span.bc-close-notification-btn {
+#bc-notification span.bc-close-notification-btn {
 	color:#000000;
 	position:absolute;
 	right:0;
 	top:0;
 	text-align:right;
-}
-
-.bc-notification span.bc-close-notification-btn:hover {
-	background-color: rgba(0,150,219,0.8);
-}
-
-.bc-notification:hover {
-	background-color: rgba(112,112,112,0.8);
-}
-
-.bc-notification span {
 	cursor:default;
 }
 
-.bc-notification img {
-	margin-left:3px;
-	height:30px;
-	width:30px;
-	opacity:1.0;
-	vertical-align:middle;
-	margin-top:10px;
-	float:left;
+#bc-notification span.bc-close-notification-btn:hover {
+	background-color: rgba(0,150,219,0.8);
 }
 
-.bc-notification span.bc-vergil {
+#bc-notification:hover {
+	background-color: rgba(112,112,112,0.8);
+}
+
+#bc-notification span.bc-vergil {
 	margin-left:3px;
 	height:55px;
 	width:55px;
@@ -387,17 +380,17 @@ ul.bc-news-list {
 	vertical-align:middle;
 	margin-top:5px;
 	float:left;
-	background: url('images/vergil_spritesheet.png') -110px 0px no-repeat;
+	background: url('chrome-extension://mabnmobbjnfkcngbbegapmdgbaeabeeb/images/vergil_spritesheet.png') -110px 0px no-repeat;
 }
 
-.bc-notification p {
+#bc-notification p {
 	overflow:hidden;
+	position:absolute;
 	height:32px;
-	width:150px;
 	color:#ffffff;
-	margin-left:40px;
-	margin-top:2em;
-	font-size:0.8em;
+	min-width:150px;
+	left:25%;
+	top:45%;
 }
 
 span.news-item-right {

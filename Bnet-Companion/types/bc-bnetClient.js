@@ -24,7 +24,8 @@
 	
 		// set or initialize the play notification setting
 		localStorage.playNotificationsSound = localStorage.playNotificationsSound ? localStorage.playNotificationsSound : true;
-				
+		localStorage.showNotifications	= localStorage.showNotifications ? localStorage.showNotifications : true;
+		
 		_soundNode = document.createElement('audio');
 		_soundNode.id = 'bc-notification';
 		_soundNode.setAttribute('type', 'audio/mp3');
@@ -42,12 +43,12 @@
 		window.open(url);
 	};
 	
-	BcBnetClient.prototype.setPlayNotifications = function(value) {	
-		localStorage.playNotificationsSound = value;
+	BcBnetClient.prototype.setNotificationSetting = function(settingName, value) {	
+		localStorage[settingName] = value;
 	};
 
-	BcBnetClient.prototype.getPlayNotifications = function() {	
-		return localStorage.playNotificationsSound;
+	BcBnetClient.prototype.getNotificationSetting = function(settingName) {	
+		return localStorage[settingName];
 	};
 
 	BcBnetClient.prototype.playNotificationSound = function() {	
@@ -153,6 +154,10 @@
 	
 	};
 	
+	BcBnetClient.prototype.testNotify = function() {
+		notifyUser();
+	};
+	
 //method:"POST",url:"https://api.twitter.com/1/statuses/retweet/"+d+".json",account:a
     var oauthRequest=function(d){
 	
@@ -207,6 +212,16 @@
 		}
 	};
 	
+	var notifyUser = function() {
+		if ( localStorage.showNotifications === 'true' ) {
+			 chrome.tabs.getSelected(null, function (tab) { 
+				if ( tab.id ) {
+					chrome.tabs.sendMessage(tab.id, {req:"notify"}); 
+				}
+			});
+		}
+	};
+	
 	var updateNews = function() {
 		
 		if ( devMode ) {
@@ -241,6 +256,7 @@
 					localStorage.latestPubDate = latestEntry;
 					localStorage.newItemsFetched = true;
 					playNewNewsSound();
+					notifyUser();
 				}
 				
 			} else {
