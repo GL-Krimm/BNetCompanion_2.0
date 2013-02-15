@@ -23,7 +23,6 @@
 		}
 		
 		chrome.browserAction.setBadgeBackgroundColor({color:[0, 150, 219, 255]});
-		this.setBadgeText('Dev');
 	
 		// set or initialize the play notification setting
 		localStorage.playNotificationsSound = localStorage.playNotificationsSound ? localStorage.playNotificationsSound : true;
