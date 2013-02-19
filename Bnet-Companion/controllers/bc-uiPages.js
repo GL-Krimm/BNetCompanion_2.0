@@ -198,7 +198,7 @@
 		itemDate.className = 'bc-news-pub-date';
 		itemDate.innerText = item.pubDate;
 		
-		if ( item.source == 'twitter') {
+		if ( item.source == 'twitter' &&  _sandbox.getNotificationSetting('twitterAuthToken') ) {
 			
 			newsItemBox.setAttribute('data-tweet-id', item.itemId);
 		

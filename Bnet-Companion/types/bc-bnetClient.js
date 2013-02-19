@@ -146,6 +146,10 @@
 		}
 	};
 	
+	BcBnetClient.prototype.testNotifications = function() {
+		setTimeout(notifyUser,2000);
+	};
+	
 	BcBnetClient.prototype.getSearchParams = function(searchStr) {
 		return getCallbackParams(searchStr);
 	};
@@ -214,8 +218,9 @@
 	};
 	
 	var notifyUser = function() {
+		
 		if ( localStorage.showNotifications === 'true' ) {
-			 chrome.tabs.getSelected(null, function (tab) { 
+			chrome.tabs.getSelected(null, function (tab) { 
 				if ( tab.id ) {
 					chrome.tabs.sendMessage(tab.id, {req:"notify"}); 
 				}
