@@ -8,9 +8,9 @@
 	},
     "icons": {
 	  "128": "bc-logo-128.png",
-	  "16": "bc-logo-16.png",
+	  "48": "bc-logo-48.png",
 	  "32": "bc-logo-32.png",
-	  "48": "bc-logo-48.png"
+	  "16": "bc-logo-16.png"
     },
 	"content_scripts": [{
 		"matches": ["http://*/*", "https://*/*"],
