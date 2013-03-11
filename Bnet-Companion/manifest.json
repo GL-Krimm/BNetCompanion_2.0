@@ -2,7 +2,7 @@
 	"manifest_version" : 2,
 	"name":"BNet Companion",
 	"description":"Chrome port of the Bungie Mobile app.",
-	"version":"2.0.6",
+	"version":"2.0.7",
 	"background": { 
 		"scripts":[ "lib/jquery.js", "lib/sha1.js", "lib/oauth.js", "types/bc-newsList.js", "types/bc-bnetClient.js", "controllers/bc-background.js" ]
 	},

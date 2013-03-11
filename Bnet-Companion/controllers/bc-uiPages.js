@@ -254,7 +254,9 @@
 			var tArea = sendField.appendChild(document.createElement('textarea'));
 			tArea.className = 'bc-retweet-field';
 			_sandbox.focus(tArea);
-			tArea.value = container.getAttribute('data-full-tweet').match(/@[a-z0-9]+[\s]/gi).join('');
+			var fieldVal = container.getAttribute('data-full-tweet').match(/@[a-z0-9]+[\s]/gi);
+			
+			tArea.value = fieldVal ? fieldVal.join('') : "";
 			
 			if ( tArea.value.toLowerCase().indexOf('@bungie') < 0 ) {
 				tArea.value = '@Bungie ' + tArea.value;
