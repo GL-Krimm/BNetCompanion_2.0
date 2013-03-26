@@ -1,6 +1,7 @@
 bcMenuButtons = [
 				//{title:'Profile',img:'profile.png',targetPage:'profile'},
 				{title:'News',img:'news.png',targetPage:'news',rootPage:true},
+				{title:'Social',img:'news.png',targetPage:'social',rootPage:true},
 				{title:'More',img:'more.png',targetPage:'more'}
 	];
 	

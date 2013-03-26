@@ -2,15 +2,15 @@
 	"manifest_version" : 2,
 	"name":"BNet Companion",
 	"description":"Chrome port of the Bungie Mobile app.",
-	"version":"2.0.6",
+	"version":"2.4.0",
 	"background": { 
 		"scripts":[ "lib/jquery.js", "lib/sha1.js", "lib/oauth.js", "types/bc-newsList.js", "types/bc-bnetClient.js", "controllers/bc-background.js" ]
 	},
     "icons": {
-	  "128": "bc-logo-128.png",
-	  "48": "bc-logo-48.png",
-	  "32": "bc-logo-32.png",
-	  "16": "bc-logo-16.png"
+	  "128": "tricorn-128.png",
+	  "48": "tricorn-48.png",
+	  "32": "tricorn-32.png",
+	  "16": "tricorn-16.png"
     },
 	"content_scripts": [{
 		"matches": ["http://*/*", "https://*/*"],
@@ -22,7 +22,7 @@
 	],
 	"browser_action" :{
 		"default_popup":"bc-interface.html",
-		"default_icon":"bc-logo.png"
+		"default_icon":"tricorn.png"
 	},
 	"permissions":["tabs", "http://www.bungie.net/*", "http://halo.bungie.net/*", "http://api.twitter.com/*", "https://api.twitter.com/*"]
 }

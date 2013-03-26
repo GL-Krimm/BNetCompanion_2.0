@@ -2,6 +2,8 @@
 	var $j = jQuery.noConflict();
 	var devMode = false;
 	var _newsFeed = null;	
+	var _bungieFeed = null;
+	var _twitterFeed = null;
 	var _bungieRssUrl = "http://www.bungie.net/en-us/Rss/News";
 	var _bungieLegacyRssUrl = "http://www.bungie.net/News/NewsRss.ashx";
 	var _soundNode = null;
@@ -18,8 +20,14 @@
 	
 		if ( localStorage.newsFeed ) {
 			_newsFeed = new BCNewsList(JSON.parse(localStorage.newsFeed));
+			
+		} else if (localStorage.bungieFeed && localStorage.twitterFeed) {
+			_bungieFeed = new BCNewsList(JSON.parse(localStorage.bungieFeed));
+			_twitterFeed = new BCNewsList(JSON.parse(localStorage.twitterFeed));
 		} else {
 			_newsFeed = new BCNewsList();
+			_bungieFeed = new BCNewsList();
+			_twitterFeed = new BCNewsList();
 		}
 		
 		chrome.browserAction.setBadgeBackgroundColor({color:[0, 150, 219, 255]});
@@ -43,6 +51,14 @@
 	
 	BcBnetClient.prototype.getNews = function() {	
 		return _newsFeed;		
+	};
+
+	BcBnetClient.prototype.getBungieNews = function() {	
+		return _bungieFeed;		
+	};
+
+	BcBnetClient.prototype.getTwitterNews = function() {	
+		return _twitterFeed;		
 	};
 	
 	BcBnetClient.prototype.openItem = function(url) {
@@ -146,10 +162,12 @@
 		}
 	};
 	
-	BcBnetClient.prototype.testNotifications = function() {
-		setTimeout(notifyUser,2000);
-	};
-	
+	if ( devMode ) {
+		BcBnetClient.prototype.testNotifications = function() {
+			setTimeout(notifyUser,2000);
+		};
+	}
+		
 	BcBnetClient.prototype.getSearchParams = function(searchStr) {
 		return getCallbackParams(searchStr);
 	};
@@ -235,9 +253,10 @@
 		} else {
 			try {
 				getTwitterFeed();
+				console.log('got twitter');
 				getBungieBlog();
 				getBungieLegacyBlog();
-				getYoutubeFeed();
+				console.log('got bungie');
 			} catch ( e ) {
 				console.log('An exception occurred when attempting to fetch the news feed:');
 				console.log(e);
@@ -247,6 +266,8 @@
 				
 		//if ( !devMode ) {
 			localStorage.newsFeed = JSON.stringify(_newsFeed);
+			localStorage.twitterFeed = JSON.stringify(_twitterFeed);
+			localStorage.bungieFeed = JSON.stringify(_bungieFeed);
 		//}				
 		
 		try {
@@ -297,8 +318,8 @@
 					link = $j(this).find('link').text();
 					
 					createdAt = $j(this).find('pubDate').text().replace("+0000", "GMT");
-					
-					_newsFeed.add({title:title, url:link, pubDate:createdAt, source:'bnet'});
+					console.log('adding to bfeed');
+					_bungieFeed.add({title:title, url:link, pubDate:createdAt, source:'bnet'});
 				});
 			}
 		});
@@ -321,8 +342,8 @@
 					link = $j(this).find('link').text();
 					
 					createdAt = $j(this).find('pubDate').text().replace("+0000", "GMT");
-					
-					_newsFeed.add({title:title, url:link, pubDate:createdAt, source:'bnet'});
+					console.log('adding to b legacy feed');
+					_bungieFeed.add({title:title, url:link, pubDate:createdAt, source:'bnet'});
 				});	
 			}
 		});
@@ -351,7 +372,7 @@
 					//title, url, pubDate, source, itemId
 						link = "http://twitter.com/bungie/statuses/" + data[i].id_str;
 						
-						_newsFeed.add({title:data[i].text, url:link, pubDate:data[i].created_at, source:'twitter', itemId:data[i].id_str});
+						_twitterFeed.add({title:data[i].text, url:link, pubDate:data[i].created_at, source:'twitter', itemId:data[i].id_str});
 					}
 				}
 			
@@ -382,7 +403,7 @@
 		for ( var i = 0; i < data.length; i++ ) {
 		//title, url, pubDate, source, itemId
 			link = "http://twitter.com/bungie/statuses/" + data[i].id_str;
-			_newsFeed.add({title:data[i].text, url:link, pubDate:data[i].created_at, source:'twitter', itemId:data[i].id_str});
+			_twitterFeed.add({title:data[i].text, url:link, pubDate:data[i].created_at, source:'twitter', itemId:data[i].id_str});
 		}
 	};
 	
