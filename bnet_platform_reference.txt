@@ -1,0 +1,85 @@
+
+URL to get specific user:
+http://www.bungie.net/Platform/User/GetBungieNetUserById/1896020
+
+output:
+
+{
+	"Response":{
+		"membershipId":"1896020",
+		"uniqueName":"Krimm",
+		"displayName":"Krimm",
+		"preferredLanguage":"en-US",
+		"profilePicture":70476,
+		"profileTheme":12,
+		"userTitle":0,
+		"successMessageFlags":"51",
+		"isDeleted":false,
+		"about":"Per Audica Ad Astra",
+		"firstAccess":"2010-10-06T16:13:27Z",
+		"lastUpdate":"2013-03-07T23:04:30.7579774Z",
+		"context":{
+			"isFollowing":false,
+			"ignoreStatus":{
+				"isIgnored":false,
+				"ignoreFlags":0
+				}
+			},
+		"banExpireDate":"2001-01-01T00:00:00Z",
+		"psnDisplayName":"krimm117",
+		"xboxDisplayName":"Krimm117",
+		"fbDisplayName":"Brandon McMullin",
+		"showActivity":true,
+		"followerCount":1,
+		"profilePicturePath":"/img/profile/avatars/bungiedayav2.jpg",
+		"profileThemeName":"bungiedayut4",
+		"userTitleDisplay":"Newbie"
+	},
+	
+	"ErrorCode":1,
+	"ErrorStatus":"Success",
+	"MessageData":{},
+	"Message":"Ok"
+}
+
+URL to get signed in user:
+http://www.bungie.net/Platform/JSONP/GetBungieNetUser/
+
+output:
+evalGetBungieNetUser(
+	{
+		"Response":{
+			"membershipId":"1896020",
+			"uniqueName":"Krimm",
+			"displayName":"Krimm",
+			"preferredLanguage":"en-US",
+			"profilePicture":70476,
+			"profileTheme":12,
+			"userTitle":0,
+			"successMessageFlags":"51",
+			"isDeleted":false,
+			"about":"Per Audica Ad Astra",
+			"firstAccess":"2010-10-06T16:13:27Z",
+			"lastUpdate":"2013-03-07T23:04:30.7579774Z",
+			"banExpireDate":"2001-01-01T00:00:00Z",
+			"psnDisplayName":"krimm117",
+			"xboxDisplayName":"Krimm117",
+			"fbDisplayName":"Brandon McMullin",
+			"showActivity":true,
+			"followerCount":1,
+			"profilePicturePath":"/img/profile/avatars/bungiedayav2.jpg",
+			"profileThemeName":"bungiedayut4",
+			"userTitleDisplay":"Newbie"
+		},
+		"ErrorCode":1,
+		"ErrorStatus":"Success",
+		"MessageData":{
+		}
+		,
+		"Message":"Ok"
+	}
+
+);
+
+//Returns the unread count for the current user 
+http://www.bungie.net/Platform/Message/GetUnreadConversationCountV2/

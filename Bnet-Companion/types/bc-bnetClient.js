@@ -1,11 +1,26 @@
+//create a window function to handle the JSONP request
+evalGetBungieNetUser = function(userResponse)
+{
+	var profile = {};
+	
+	if (userResponse.Message === "Ok") {
+		profile = userResponse.Response;
+	}
+	
+	return profile;
+};
+
 (function() {
 	var $j = jQuery.noConflict();
 	var devMode = false;
 	var _newsFeed = null;	
 	var _bungieRssUrl = "http://www.bungie.net/en-us/Rss/News";
 	var _bungieLegacyRssUrl = "http://www.bungie.net/News/NewsRss.ashx";
+	var _getBungieUserByMidUrl = "http://www.bungie.net/Platform/User/GetBungieNetUserById/"; //1896020
+	var _getCurrentBungieUserUrl = "http://www.bungie.net/Platform/JSONP/GetBungieNetUser/";
 	var _soundNode = null;
 	var _newItemsCallback = null;
+	var _bnetProfile = null
 	
 	BcBnetClient = function() {
 	
@@ -22,17 +37,15 @@
 			_newsFeed = new BCNewsList();
 		}
 		
-		chrome.browserAction.setBadgeBackgroundColor({color:[0, 150, 219, 255]});
-	
-		// set or initialize the play notification setting
-		localStorage.playNotificationsSound = localStorage.playNotificationsSound ? localStorage.playNotificationsSound : true;
-		localStorage.showNotifications	= localStorage.showNotifications ? localStorage.showNotifications : false;
+		if ( localStorage.bnetProfile ) {
+			_bnetProfile = JSON.parse(localStorage.bnetProfile);
+		} else {
+			//go get it!
+		}
 		
-		_soundNode = document.createElement('audio');
-		_soundNode.id = 'bc-notification';
-		_soundNode.setAttribute('type', 'audio/mp3');
-		_soundNode.setAttribute('src', 'sounds/notification.mp3');
-		document.body.appendChild(_soundNode);
+		chrome.browserAction.setBadgeBackgroundColor({color:[0, 150, 219, 255]});
+
+		initAudioNotifications();
 		
 		updateNews();
 	};
@@ -118,7 +131,7 @@
 	};
 	
 	BcBnetClient.prototype.reply = function(tweetKey, msg) {
-		var url = "https://api.twitter.com/1/statuses/update.json";
+		var url = "https://api.twitter.com/1.1/statuses/update.json";
 		
 		var params = [['status', msg],['in_reply_to_status_id',tweetKey]];
 		
@@ -127,7 +140,7 @@
 
 	BcBnetClient.prototype.retweet = function(tweetKey) {
 	
-		var twitterUrl = "https://api.twitter.com/1/statuses/retweet/"+tweetKey+".json";
+		var twitterUrl = "https://api.twitter.com/1.1/statuses/retweet/"+tweetKey+".json";
 		
 		try {
 			oauthRequest({url:twitterUrl, method:'POST', token:localStorage.twitterAuthToken, tokenSecret:localStorage.twitterAuthTokenSecret});
@@ -138,7 +151,7 @@
 	//https://api.twitter.com/1/favorites/create/:id.format
 	BcBnetClient.prototype.favoriteTweet = function(tweetKey) {
 	
-		var twitterUrl = "https://api.twitter.com/1/favorites/create/" +tweetKey+ ".json";
+		var twitterUrl = "https://api.twitter.com/1.1/favorites/create/" +tweetKey+ ".json";
 		
 		try {
 			oauthRequest({url:twitterUrl, method:'POST', token:localStorage.twitterAuthToken, tokenSecret:localStorage.twitterAuthTokenSecret});
@@ -154,6 +167,19 @@
 		return getCallbackParams(searchStr);
 	};
 	
+	BcBnetClient.prototype.getCurrentBnetUser = function() {
+		
+	};
+	
+	var fetchCurrentBnetUser = function() {
+		var jsonPNode = document.createElement("script");
+		var callback = function(obj) {
+			console.log(obj);
+		};
+		jsonPNode.src = _getCurrentBungieUserUrl + "?callback=" + encodeURIComponent(callback);
+		
+	};
+	
 	var getCallbackParams = function(searchStr) {
 		var params = {};
 		searchStr.replace('?','').split('&').forEach(function(item) {
@@ -163,6 +189,27 @@
 		return params;
 	
 	};
+	
+	var initAudioNotifications = function() {
+		// set or initialize the play notification setting
+		localStorage.playNotificationsSound = localStorage.playNotificationsSound ? localStorage.playNotificationsSound : true;
+		localStorage.showNotifications	= localStorage.showNotifications ? localStorage.showNotifications : false;
+		
+		_soundNode = document.createElement('audio');
+		_soundNode.id = 'bc-notification';
+		_soundNode.setAttribute('type', 'audio/mp3');
+		_soundNode.setAttribute('src', 'sounds/notification.mp3');
+		document.body.appendChild(_soundNode);
+	};
+	
+	var retrieveProfile = function() {
+		$j.getJSON(_getCurrentBungieUserUrl + "?callback=?", null, function(response) {
+			if (response.ErrorStatus === "Success") {
+				_bnetProfile = response.Response;
+			}
+		});
+		return _bnetProfile;
+	}
 	
     var oauthRequest=function(d){
 	
@@ -196,7 +243,7 @@
 		OAuth.SignatureMethod.sign(message,accessor);
 		
 		try {
-			$j.ajax({
+			ajax({
 				url:message.action,
 				async:d.async||true,
 				type:message.method||'GET',
@@ -209,6 +256,10 @@
 		} catch ( e ) {
 		}
 
+	};
+	
+	var ajax = function( opts ) {
+		$j.ajax(opts);
 	};
 
 	var playNewNewsSound = function() {
@@ -284,7 +335,7 @@
 	
 		var link, title, createdAt, item;
 		
-		$j.ajax({
+		ajax({
 			url: _bungieRssUrl,
 			type:'GET',
 			dataType:'XML',
@@ -308,7 +359,7 @@
 	
 		var link, title, createdAt, item;
 
-		$j.ajax({
+		ajax({
 			url: _bungieLegacyRssUrl,
 			type:'GET',
 			dataType:'XML',
@@ -337,12 +388,12 @@
 		} else {
 			// for testing twitter funcs - 180827393
 			// bungie twitter uid - 26280712
-			var twitterUrl = "http://api.twitter.com/1/statuses/user_timeline.json?user_id=26280712&count=80&include_rts=1";
+			var twitterUrl = "http://api.twitter.com/1.1/statuses/user_timeline.json?user_id=26280712&count=80&include_rts=1";
 			
 			var link;
 			var item;
 			
-			$j.ajax({
+			ajax({
 				url:twitterUrl,
 				dataType:'JSON',
 				async:false,
@@ -369,7 +420,7 @@
 		];
 		
 		oauthRequest({
-			url:"https://api.twitter.com/1/statuses/user_timeline.json",
+			url:"https://api.twitter.com/1.1/statuses/user_timeline.json",
 			parameters:params,
 			token:localStorage.twitterAuthToken,
 			tokenSecret:localStorage.twitterAuthTokenSecret,
@@ -387,7 +438,7 @@
 	};
 	
 	var getYoutubeFeed = function() {
-		$j.ajax({
+		ajax({
 			url:"https://gdata.youtube.com/feeds/api/users/bungie/uploads?max-results=10",
 			type:"GET",
 			async:false,
