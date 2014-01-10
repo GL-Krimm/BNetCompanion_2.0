@@ -118,7 +118,7 @@
 	};
 	
 	BcBnetClient.prototype.reply = function(tweetKey, msg) {
-		var url = "https://api.twitter.com/1/statuses/update.json";
+		var url = "https://api.twitter.com/1.1/statuses/update.json";
 		
 		var params = [['status', msg],['in_reply_to_status_id',tweetKey]];
 		
@@ -127,7 +127,7 @@
 
 	BcBnetClient.prototype.retweet = function(tweetKey) {
 	
-		var twitterUrl = "https://api.twitter.com/1/statuses/retweet/"+tweetKey+".json";
+		var twitterUrl = "https://api.twitter.com/1.1/statuses/retweet/"+tweetKey+".json";
 		
 		try {
 			oauthRequest({url:twitterUrl, method:'POST', token:localStorage.twitterAuthToken, tokenSecret:localStorage.twitterAuthTokenSecret});
@@ -135,10 +135,10 @@
 		}
 	};
 	
-	//https://api.twitter.com/1/favorites/create/:id.format
+	//https://api.twitter.com/1.1/favorites/create/:id.format
 	BcBnetClient.prototype.favoriteTweet = function(tweetKey) {
 	
-		var twitterUrl = "https://api.twitter.com/1/favorites/create/" +tweetKey+ ".json";
+		var twitterUrl = "https://api.twitter.com/1.1/favorites/create/" +tweetKey+ ".json";
 		
 		try {
 			oauthRequest({url:twitterUrl, method:'POST', token:localStorage.twitterAuthToken, tokenSecret:localStorage.twitterAuthTokenSecret});
@@ -380,7 +380,7 @@
 		];
 		
 		oauthRequest({
-			url:"https://api.twitter.com/1/statuses/user_timeline.json",
+			url:"https://api.twitter.com/1.1/statuses/user_timeline.json",
 			parameters:params,
 			token:localStorage.twitterAuthToken,
 			tokenSecret:localStorage.twitterAuthTokenSecret,

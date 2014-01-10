@@ -12,7 +12,7 @@ function getSearchParams(searchStr) {
 jQuery(document).ready(function() {
 	
 	bnetClient = new BcBnetClient();
-	
+	console.log("eh!");
 	var params = null;
 	if ( window.location.search ) {
 		// check item and get it in the same call.
