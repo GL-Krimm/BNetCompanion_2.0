@@ -191,6 +191,7 @@
 		// render the title
 		var itemText = newsItemBox.appendChild(document.createElement('p'));
 		itemText.className = 'bc-news-details';
+		console.log(JSON.stringify(item));
 		itemText.innerText = item.title.substring(0,60).concat('...');
 		
 		// lastly, the pubdate

@@ -22,7 +22,9 @@
 	};
 	
 	BCNewsList.prototype.add = function(item) {
-	
+	    if (!item.title || !item.pubDate || !item.url || !item.source) {
+	        return;
+	    }
 		var key = item.source[0] + '-';
 		key += new Date(item.pubDate);
 		

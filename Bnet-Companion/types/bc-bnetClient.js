@@ -164,7 +164,7 @@
 	
 	};
 	
-    var oauthRequest=function(d){
+	var oauthRequest=function(d){
 	
 		var accessor={
 			consumerSecret:TwitterConsumerSecret
@@ -330,14 +330,13 @@
 	};
 	
 	var getTwitterFeed = function() {
-		
-		
+		console.log('attempting to get feed');
 		if ( localStorage.twitterAuthToken ) {		
 			getSignedTwitterFeed();
 		} else {
 			// for testing twitter funcs - 180827393
 			// bungie twitter uid - 26280712
-			var twitterUrl = "http://api.twitter.com/1/statuses/user_timeline.json?user_id=26280712&count=80&include_rts=1";
+		    var twitterUrl = "http://bnetcompanion.cloudapp.net/timeline.svc/timeline";
 			
 			var link;
 			var item;
@@ -348,16 +347,28 @@
 				async:false,
 				success:function(data) {
 					for ( var i = 0; i < data.length; i++ ) {
-					//title, url, pubDate, source, itemId
+					    //title, url, pubDate, source, itemId
+					    if (!data[i].id_str) {
+					        continue;
+					    }
 						link = "http://twitter.com/bungie/statuses/" + data[i].id_str;
-						
-						_newsFeed.add({title:data[i].text, url:link, pubDate:data[i].created_at, source:'twitter', itemId:data[i].id_str});
+						_newsFeed.add({ title: data[i].text, url: link, pubDate: data[i].created_at, source: 'twitter', itemId: data[i].id_str });
 					}
 				}
 			
 			});
 		}	
 		
+	};
+	
+	window.parseTwitterJsonp = function(data) {
+		console.log(data);
+		for ( var i = 0; i < data.length; i++ ) {
+		//title, url, pubDate, source, itemId
+			link = "http://twitter.com/bungie/statuses/" + data[i].id_str;
+			
+			//_newsFeed.add({title:data[i].Text,pubDate:data[i].CreatedAt, source:'twitter', itemId:data[i].id_str});
+		}
 	};
 	
 	var getSignedTwitterFeed = function() {
